@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("codex-api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0b93a69099957d24fdf64aba3519160bbc489b05")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+865dcb91c2c2d16cee088de4ebe4e262a9f13e1a")]
 [assembly: System.Reflection.AssemblyProductAttribute("codex-api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("codex-api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
