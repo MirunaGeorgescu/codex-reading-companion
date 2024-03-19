@@ -7,8 +7,10 @@ namespace codex_api.Models
     // and allows me to query and save instances of entity classes
     public class ApplicationDbContext : DbContext 
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options) { }
 
         public DbSet<Book> Books { get; set; }
     }
 }
+
