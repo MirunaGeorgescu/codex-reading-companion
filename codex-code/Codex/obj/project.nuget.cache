@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "dpVpY6Mw0Oh9waOTqZF69uv0T5XuRFe42K2Zo7cSe/zgs4KhDVLOqsHOrIKTFYzR3xZvITBqBIQVhL6qLjPv5w==",
+  "dgSpecHash": "Q76tFZ5hrxobtH37Uli0mzmxNCmzRVBiJHqVOilO1VqGk6soREBNL2NjwdjhpqK2KPcdMK591xmHP3ok8rmFfg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\mirub\\Desktop\\Codex\\Codex.csproj",
+  "projectFilePath": "C:\\Users\\mirub\\Documents\\GitHub\\codex-reading-companion\\codex-code\\Codex\\Codex.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mirub\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\mirub\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

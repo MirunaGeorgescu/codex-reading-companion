@@ -4560,11 +4560,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mirub\\Desktop\\Codex\\Codex.csproj",
+      "projectUniqueName": "C:\\Users\\mirub\\Documents\\GitHub\\codex-reading-companion\\codex-code\\Codex\\Codex.csproj",
       "projectName": "Codex",
-      "projectPath": "C:\\Users\\mirub\\Desktop\\Codex\\Codex.csproj",
+      "projectPath": "C:\\Users\\mirub\\Documents\\GitHub\\codex-reading-companion\\codex-code\\Codex\\Codex.csproj",
       "packagesPath": "C:\\Users\\mirub\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mirub\\Desktop\\Codex\\obj\\",
+      "outputPath": "C:\\Users\\mirub\\Documents\\GitHub\\codex-reading-companion\\codex-code\\Codex\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,5 +1,54 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@Model IEnumerable<Codex.Models.Book>
+
+    <div class="row">
+        @foreach (var book in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="@book.CoverImage" alt="@book.Title Cover Image" style="max-width: 100%; height: auto;" />
+                    <div class="card-body">
+                        <h4 class="card-title">@book.Title</h4>
+                        <h5 class="card-subtitle mb-2 text-muted">by @book.Author</h5>
+                        <p class="cardtext">Rating: @book.Rating</p>
+                        <a class="btn-light" href ="Books/Show/@book.BookId">Show details</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+
+
+    @if(ViewBag.TotalPages > 1)
+    {
+        <nav aria-label="Books index page">
+            <ul class="pagination">
+                @if(ViewBag.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/Books/Index?page=@(ViewBag.CurrentPage-1)">Prevoius</a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    @if(i == ViewBag.CurrentPage)
+                    {
+                        <li class="page-item">@i</li>
+                    }
+                    else{
+                        <li class="page-item active">
+                            <a class="page-link" href="/Books/Index?page=@i">@i</a>
+                        </li>
+                    }
+                }
+
+                @if(ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/Books/Index?page=@(ViewBag.CurrentPage+1)">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
