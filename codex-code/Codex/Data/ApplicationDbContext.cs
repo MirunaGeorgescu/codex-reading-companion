@@ -13,5 +13,6 @@ namespace Codex.Data
             : base(options) { }
 
         public DbSet<Book> Books { get; set; }
+        public DbSet<Genre> Genres { get; set;  }
     }
 }
