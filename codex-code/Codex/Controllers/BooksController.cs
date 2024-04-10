@@ -31,7 +31,7 @@ namespace Codex.Controllers
         }
 
         // show method for a certain book 
-        [HttpGet("Show/{Id:int}")]
+        [HttpGet("Show/{id:int}")]
         public IActionResult Show(int id)
         {
             Book book = GetBookByID(id);
@@ -75,7 +75,7 @@ namespace Codex.Controllers
         }
 
         // displayng the form for editing a book
-        [HttpGet("/Edit/{Id:int}")]
+        [HttpGet("Edit/{id:int}")]
         public IActionResult Edit(int id)
         {
             // finding the book in the database
@@ -85,7 +85,7 @@ namespace Codex.Controllers
 
         }
 
-        [HttpPost("/Edit/{Id:int}")]
+        [HttpPost("Edit/{id:int}")]
         public IActionResult Edit(int id, Book editedBook)
         {
             Book oldBook = GetBookByID(id);
@@ -105,6 +105,22 @@ namespace Codex.Controllers
             }
         }
 
+
+        [HttpPost("Delete/{id:int}")]
+        public ActionResult Delete(int id)
+        {
+            // find book based on id
+            Book book = GetBookByID(id);
+
+            // remove book form database
+            database.Books.Remove(book);
+
+            TempData["message"] = "The book " + book.Title + " was added to the database!"; 
+
+            // saving the changes made 
+            database.SaveChanges();
+            return RedirectToAction("Index");
+        }
 
         // retrieving all the books from the database
         private IEnumerable<Book> GetAllBooks()

@@ -27,7 +27,11 @@
             
             <div class="card-footer">
                 <a href="/Edit/@Model.BookId" class="btn btn-outline-secondary">Edit</a>
-                <a href="/Delete/@Model.BookId" class="btn btn-outline-danger">Delete</a>
+
+                <form method="post" action="/Books/Delete/@Model.BookId">
+                    <button class="btn btn-outline-danger" type="submit">Delete</button>
+                </form>
+               
             </div>
         </div>
     </div>
