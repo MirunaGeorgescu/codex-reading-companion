@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "+1A6KL6o3sPjhwe2NjTCsYA4owpRDWE5WeXcCjj4V+A=",
+  "Hash": "YikkjwrXW5bUPu/ebzYqQJ92HZ/wPg66B8BL+UB4vOA=",
   "Source": "Codex",
   "BasePath": "_content/Codex",
   "Mode": "Default",
@@ -1250,6 +1250,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\site.js"
+    },
+    {
+      "Identity": "C:\\Users\\mirub\\Documents\\GitHub\\codex-reading-companion\\codex-code\\Codex\\wwwroot\\js\\Summernote.js",
+      "SourceId": "Codex",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\mirub\\Documents\\GitHub\\codex-reading-companion\\codex-code\\Codex\\wwwroot\\",
+      "BasePath": "_content/Codex",
+      "RelativePath": "js/Summernote.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\Summernote.js"
     },
     {
       "Identity": "C:\\Users\\mirub\\Documents\\GitHub\\codex-reading-companion\\codex-code\\Codex\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",

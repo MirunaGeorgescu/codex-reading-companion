@@ -38,6 +38,42 @@ namespace Codex.Controllers
             return View(book);
         }
 
+        // displaying the form for adding a new book
+        [HttpGet("New")]
+        public IActionResult New() { 
+            return View(); 
+        }
+
+        [HttpPost("New")]
+        public IActionResult New(Book book)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // setting the rating to 0
+                    book.Rating = 0;
+
+                    database.Books.Add(book);
+                    database.SaveChanges();
+
+                    TempData["message"] = "The book " + book.Title + " was added to the database!";
+
+                    return Redirect("/Books/Show/" + book.BookId);
+                }
+                else
+                {
+                    return View(book);
+                }
+            }
+            catch (Exception ex) {
+                ModelState.AddModelError("", "An error occurred while saving the book: " + ex.Message);
+                return View(book);
+            }
+           
+        }
+
+
         // retrieving all the books from the database
         public IEnumerable<Book> GetAllBooks()
         {

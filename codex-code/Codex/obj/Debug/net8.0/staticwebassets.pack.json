@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\mirub\\Documents\\GitHub\\codex-reading-companion\\codex-code\\Codex\\wwwroot\\js\\Summernote.js",
+      "PackagePath": "staticwebassets\\js\\Summernote.js"
+    },
+    {
       "Id": "C:\\Users\\mirub\\Documents\\GitHub\\codex-reading-companion\\codex-code\\Codex\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

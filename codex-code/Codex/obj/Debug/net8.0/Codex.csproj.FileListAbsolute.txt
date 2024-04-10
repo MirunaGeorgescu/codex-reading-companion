@@ -295,3 +295,6 @@ C:\Users\mirub\Documents\GitHub\codex-reading-companion\codex-code\Codex\obj\Deb
 C:\Users\mirub\Documents\GitHub\codex-reading-companion\codex-code\Codex\obj\Debug\net8.0\Codex.pdb
 C:\Users\mirub\Documents\GitHub\codex-reading-companion\codex-code\Codex\obj\Debug\net8.0\Codex.genruntimeconfig.cache
 C:\Users\mirub\Documents\GitHub\codex-reading-companion\codex-code\Codex\obj\Debug\net8.0\ref\Codex.dll
+C:\Users\mirub\Documents\GitHub\codex-reading-companion\codex-code\Codex\bin\Debug\net8.0\AngleSharp.dll
+C:\Users\mirub\Documents\GitHub\codex-reading-companion\codex-code\Codex\bin\Debug\net8.0\AngleSharp.Css.dll
+C:\Users\mirub\Documents\GitHub\codex-reading-companion\codex-code\Codex\bin\Debug\net8.0\HtmlSanitizer.dll
