@@ -70,7 +70,7 @@ namespace Codex.Controllers
             var paginatedBooks = allBooks.Skip(skip).Take(booksPerPage).ToList();
 
             // seting ViewBag properties for pagination 
-            ViewBag.CurrPage = pageNumber;
+            ViewBag.CurrentPage = pageNumber;
             ViewBag.TotalPages = totalPages;
 
             return paginatedBooks;
