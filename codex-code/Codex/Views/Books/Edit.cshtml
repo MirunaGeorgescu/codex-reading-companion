@@ -1,49 +1,50 @@
 ﻿@model Codex.Models.Book
 
-<h2>Add a new book to the Codex database!</h2>
+<h2>Edit @Model.Title</h2>
 
-<form method="post" action="/books/new">
+<form method="post" action="/books/edit">
+
     <div class="form-group">
         <label asp-for="Title">Title:</label>
-        <input asp-for="Title" type="text" class="form-control" placeholder="Enter the title"/>
+        <input asp-for="Title" type="text" class="form-control" value="@Model.Title" />
         <span asp-validation-for="Title" class="text-danger"></span>
     </div>
-    <br/>
+    <br />
 
     <div class="form-group">
         <label asp-for="Author">Author:</label>
-        <input asp-for="Author" type="text" class="form-control" placeholder="Author's name" />
+        <input asp-for="Author" type="text" class="form-control" value="@Model.Author" />
         <span asp-validation-for="Author" class="text-danger"></span>
     </div>
     <br />
 
     <div class="form-group">
         <label asp-for="Genre">Genre:</label>
-        <input asp-for="Genre" type="text" class="form-control" placeholder="Enter the genre" />
+        <input asp-for="Genre" type="text" class="form-control" value="@Model.Genre" />
         <span asp-validation-for="Genre" class="text-danger"></span>
     </div>
     <br />
 
     <div class="form-group">
         <label asp-for="Synopsis">Synopsis:</label>
-        <textarea asp-for="Synopsis" class="form-control" rows="3" placeholder="Enter synopsis"></textarea>
+        <textarea asp-for="Synopsis" class="form-control" rows="3" value="@Model.Genre"></textarea>
         <span asp-validation-for="Synopsis" class="text-danger"></span>
     </div>
     <br />
 
     <div class="form-group">
         <label asp-for="PublicationDate">Publication Date:</label>
-        <input asp-for ="PublicationDate" type="date" class="form-control"/>
+        <input asp-for="PublicationDate" type="date" class="form-control" value="@Model.PublicationDate"/>
         <span asp-validation-for="PublicationDate" class="text-danger"></span>
     </div>
     <br />
 
     <div class="form-group">
         <label asp-for="CoverImage">Cover Image:</label>
-        <input asp-for="CoverImage" type="text" class="form-control" placeholder="Enter the link to the cover image" />
+        <input asp-for="CoverImage" type="text" class="form-control" value="@Model.CoverImage" />
         <span asp-validation-for="CoverImage" class="text-danger"></span>
     </div>
     <br />
 
-    <button type="submit" class="btn btn-light">Add book!</button>
+    <button type="submit" class="btn btn-light">Edit book!</button>
 </form>

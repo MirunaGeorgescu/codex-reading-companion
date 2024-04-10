@@ -24,6 +24,11 @@
                 <h5 class="card-title">Publication Date</h5>
                 <p class="card-text">@Model.PublicationDate</p>
             </div>
+            
+            <div class="card-footer">
+                <a href="/Edit/@Model.BookId" class="btn btn-outline-secondary">Edit</a>
+                <a href="/Delete/@Model.BookId" class="btn btn-outline-danger">Delete</a>
+            </div>
         </div>
     </div>
 </div>

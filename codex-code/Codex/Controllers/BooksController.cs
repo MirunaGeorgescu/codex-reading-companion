@@ -44,6 +44,7 @@ namespace Codex.Controllers
             return View(); 
         }
 
+        // adding the info to the database
         [HttpPost("New")]
         public IActionResult New(Book book)
         {
@@ -73,9 +74,40 @@ namespace Codex.Controllers
            
         }
 
+        // displayng the form for editing a book
+        [HttpGet("/Edit/{Id:int}")]
+        public IActionResult Edit(int id)
+        {
+            // finding the book in the database
+            var book = GetBookByID(id);
+
+            return View(book); 
+
+        }
+
+        [HttpPost("/Edit/{Id:int}")]
+        public IActionResult Edit(int id, Book editedBook)
+        {
+            Book oldBook = GetBookByID(id);
+
+            if (ModelState.IsValid)
+            {
+                MapAttributes(ref oldBook, editedBook);
+                database.SaveChanges();
+
+                TempData["message"] = "The book " + oldBook.Title + " was succesfully edited!";
+
+                return Redirect("/Books/Show/" + oldBook.BookId);
+            }
+            else
+            {
+                return View(oldBook);
+            }
+        }
+
 
         // retrieving all the books from the database
-        public IEnumerable<Book> GetAllBooks()
+        private IEnumerable<Book> GetAllBooks()
         {
             List<Book> allBooks = database.Books.ToList();
             return allBooks;
@@ -83,10 +115,20 @@ namespace Codex.Controllers
         }
 
         // retrieving a certain book from the database knowing the id
-        public Book GetBookByID(int id)
+        private Book GetBookByID(int id)
         {
             Book book = database.Books.FirstOrDefault(book => book.BookId == id);
             return book;
+        }
+
+        private void MapAttributes(ref Book destination, Book source)
+        {
+            destination.Title = source.Title;
+            destination.Author = source.Author;
+            destination.Genre = source.Genre;
+            destination.PublicationDate = source.PublicationDate;
+            destination.Synopsis = source.Synopsis; 
+            destination.CoverImage = source.CoverImage;
         }
 
         private IEnumerable<Book> paginateBooks(int pageNumber)
