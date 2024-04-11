@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Primitives;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Primitives;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Codex.Models
 {
@@ -21,7 +23,6 @@ namespace Codex.Models
         public virtual Genre Genre { get; set; }
 
         // public ICollection<string>? Tags { get; set; }
-
         [Required(ErrorMessage = "The synopsis is required!")]
         public string Synopsis { get; set; }
 
@@ -31,5 +32,9 @@ namespace Codex.Models
         // CoverImage stores the path of the image 
         [Required(ErrorMessage = "The cover image is required!")]
         public string CoverImage { get; set; }
+
+        // options for the genre dropt-down list
+        [NotMapped]
+        public IEnumerable<SelectListItem>? GenreOptions{ get; set; }
     }
 }

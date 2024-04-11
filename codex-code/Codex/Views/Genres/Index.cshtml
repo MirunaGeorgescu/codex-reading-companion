@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Codex.Models.Genre>
+
+<h2>All the genres in the Codex database </h2>
+
+<div class ="row">
+    @foreach (var genre in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card" style="width: 18rem;">
+                <div class="card-header">
+                    @genre.Name
+                </div>
+                <ul class="list-group list-group-flush">
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col">
+                                <a href="/Edit/@genre.GenreId" class="btn btn-outline-secondary">Edit</a>
+                            </div>
+                            <div class="col">
+                                <form method="post" action="/Delete/@genre.GenreId">
+                                    <button class="btn btn-outline-danger" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    }
+</div>

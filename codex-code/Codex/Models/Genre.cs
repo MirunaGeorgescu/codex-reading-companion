@@ -7,6 +7,6 @@ namespace Codex.Models
         [Key]
         public int GenreId { get; set; }
         [Required(ErrorMessage = "The name of the genre is required!")]
-        public int Name {  get; set; }
+        public string Name {  get; set; }
     }
 }
