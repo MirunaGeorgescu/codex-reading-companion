@@ -53,7 +53,7 @@ namespace Codex.Controllers
 
         // adding the info to the database
         [HttpPost("New")]
-        public async Task<IActionResult> New(Book newBook)
+        public IActionResult New(Book newBook)
         {
             try
             {
