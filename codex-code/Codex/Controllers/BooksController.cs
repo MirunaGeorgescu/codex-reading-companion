@@ -1,6 +1,7 @@
 ﻿using Codex.Data;
 using Codex.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Identity.Client;
 
 namespace Codex.Controllers
@@ -40,38 +41,30 @@ namespace Codex.Controllers
 
         // displaying the form for adding a new book
         [HttpGet("New")]
-        public IActionResult New() { 
-            return View(); 
+        public IActionResult New() {
+           
+            Book newBook = new Book();
+            newBook.GenreOptions = getAllGenres(); 
+
+            return View(newBook);
         }
 
         // adding the info to the database
         [HttpPost("New")]
-        public IActionResult New(Book book)
+        public async Task<IActionResult> New(Book newBook)
         {
-            try
+            if(ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    // setting the rating to 0
-                    book.Rating = 0;
+                database.Books.Add(newBook);    
+                database.SaveChanges();
 
-                    database.Books.Add(book);
-                    database.SaveChanges();
-
-                    TempData["message"] = "The book " + book.Title + " was added to the database!";
-
-                    return Redirect("/Books/Show/" + book.BookId);
-                }
-                else
-                {
-                    return View(book);
-                }
+                return RedirectToAction("Index");
             }
-            catch (Exception ex) {
-                ModelState.AddModelError("", "An error occurred while saving the book: " + ex.Message);
-                return View(book);
+            else
+            {
+                newBook.GenreOptions = getAllGenres();  
+                return View(newBook);   
             }
-           
         }
 
         // displayng the form for editing a book
@@ -169,6 +162,28 @@ namespace Codex.Controllers
 
             return paginatedBooks;
         }
+
+        [NonAction]
+        private IEnumerable<SelectListItem> getAllGenres()
+        {
+            // making a new list of selectItems
+            var selectList = new List<SelectListItem>();
+
+            var allGenresFormDatabase = database.Genres.ToList();
+
+            // transforming all the genres in selectListItems
+            foreach (var genre in allGenresFormDatabase)
+            {
+                var selectItem = new SelectListItem();
+                selectItem.Value = genre.GenreId.ToString();
+                selectItem.Text = genre.Name;
+
+                selectList.Add(selectItem);
+            }
+
+            return selectList;
+        }
+
     }
 }
 

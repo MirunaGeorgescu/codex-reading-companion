@@ -101,6 +101,7 @@ namespace Codex.Controllers
                     }
                     else
                     {
+                        // if the genre is not unique then throw error
                         ModelState.AddModelError("Name", "The genre " + newGenre.Name + " already exists in the database!");
                         return View(newGenre);
                     }
@@ -163,6 +164,7 @@ namespace Codex.Controllers
 
         private Genre getGenreByName(string name)
         {
+            // finding the genre with the given name in the database 
             return database.Genres.FirstOrDefault(genre => genre.Name == name); 
         }
     }

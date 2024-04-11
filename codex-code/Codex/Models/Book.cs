@@ -20,7 +20,7 @@ namespace Codex.Models
 
         [Required(ErrorMessage = "The genre is required!")]
         public int? GenreId { get; set; }
-        public virtual Genre Genre { get; set; }
+        public virtual Genre? Genre { get; set; }
 
         // public ICollection<string>? Tags { get; set; }
         [Required(ErrorMessage = "The synopsis is required!")]

@@ -17,11 +17,10 @@
     </div>
     <br />
 
-    <div class="form-group">
-        <label asp-for="Genre">Genre:</label>
-        <input asp-for="Genre" type="text" class="form-control" placeholder="Enter the genre" />
-        <span asp-validation-for="Genre" class="text-danger"></span>
-    </div>
+    <label>Genre:</label>
+    @Html.DropDownListFor(m => m.GenreId, new SelectList(Model.GenreOptions, "Value", "Text"),
+            "SelectGenre", new { @class = "form-control" })
+    @Html.ValidationMessageFor(m => m.Genre, null, new { @class = "text-danger" })
     <br />
 
     <div class="form-group">
