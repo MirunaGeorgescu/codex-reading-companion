@@ -19,7 +19,7 @@
 
     <label>Genre:</label>
     @Html.DropDownListFor(m => m.GenreId, new SelectList(Model.GenreOptions, "Value", "Text"),
-            "SelectGenre", new { @class = "form-control" })
+            "Select genre", new { @class = "form-control" })
     @Html.ValidationMessageFor(m => m.Genre, null, new { @class = "text-danger" })
     <br />
 

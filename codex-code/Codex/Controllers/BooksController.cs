@@ -100,6 +100,9 @@ namespace Codex.Controllers
             // finding the book in the database
             var book = GetBookByID(id);
 
+            // load the genres in order to populate the dropdown list in the view
+            book.GenreOptions = getAllGenres();
+
             return View(book); 
 
         }
@@ -111,24 +114,33 @@ namespace Codex.Controllers
 
             try
             {
-                if (ModelState.IsValid)
+                if (isBookUnique(editedBook))
                 {
-                    MapAttributes(ref oldBook, editedBook);
-                    database.SaveChanges();
+                    if (ModelState.IsValid)
+                    {
+                        MapAttributes(ref oldBook, editedBook);
+                        database.SaveChanges();
 
-                    TempData["message"] = "The book " + oldBook.Title + " was succesfully edited!";
+                        TempData["message"] = "The book " + oldBook.Title + " was succesfully edited!";
 
-                    return Redirect("/Books/Show/" + oldBook.BookId);
+                        return Redirect("/Books/Show/" + oldBook.BookId);
+                    }
+                    else
+                    {
+                        return View(oldBook);
+                    }
                 }
                 else
                 {
+                    // if the book is not unique then throw error
+                    ModelState.AddModelError("Book", "The book " + editedBook.Title + " already exists in the database!");
                     return View(oldBook);
                 }
             }
             catch (Exception ex)
             {
 
-                ModelState.AddModelError("", "An error occurred while saving the genre: " + ex.Message);
+                ModelState.AddModelError("", "An error occurred while saving the book: " + ex.Message);
                 return View(oldBook);
             }
         }
