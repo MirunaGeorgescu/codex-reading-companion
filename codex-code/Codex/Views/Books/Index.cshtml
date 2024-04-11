@@ -1,5 +1,13 @@
 ﻿@model IEnumerable<Codex.Models.Book>
 
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-light" role="alert">
+        @TempData["message"]
+    </div>
+}
+<br />
+
     <div class="row">
         @foreach (var book in Model)
         {

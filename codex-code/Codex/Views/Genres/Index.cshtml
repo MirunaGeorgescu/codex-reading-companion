@@ -1,7 +1,15 @@
 ﻿@model IEnumerable<Codex.Models.Genre>
 
 <h2>All the genres in the Codex database </h2>
-</br>
+<br/>
+
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-light" role="alert">
+        @TempData["message"]
+    </div>
+}
+<br />
 
 <div class ="row">
     @foreach (var genre in Model)

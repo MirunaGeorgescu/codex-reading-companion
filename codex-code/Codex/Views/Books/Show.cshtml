@@ -1,5 +1,13 @@
 ﻿@model Codex.Models.Book
 
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-light" role="alert">
+        @TempData["message"]
+    </div>
+}
+<br />
+
 <div class="row">
     <div class="col-md-4">
         <div class="card" style="width: 100%; position: sticky; top: 0;">
