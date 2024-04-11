@@ -100,6 +100,22 @@ namespace Codex.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult Delete(int id) {
+            // finding the genre in the database
+            Genre genre = getGenreById(id);
+
+            // removing the genre from the database
+            database.Genres.Remove(genre);
+
+            TempData["message"] = "The genre " + genre.Name + " was removed from the database!";
+
+            // saving the changes made 
+            database.SaveChanges();
+            return RedirectToAction("Index");
+
+        }
+
         // private method to get all the genres from the database
         private IEnumerable<Genre> getAllGenres()
         {
