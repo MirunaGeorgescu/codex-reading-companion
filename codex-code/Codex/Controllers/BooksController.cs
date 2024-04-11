@@ -53,17 +53,43 @@ namespace Codex.Controllers
         [HttpPost("New")]
         public async Task<IActionResult> New(Book newBook)
         {
-            if(ModelState.IsValid)
+            try
             {
-                database.Books.Add(newBook);    
-                database.SaveChanges();
+                if (ModelState.IsValid)
+                {
+                    if (isBookUnique(newBook))
+                    {
+                        // if the book is not already in the database we add it 
+                        database.Books.Add(newBook);
+                        database.SaveChanges();
 
-                return RedirectToAction("Index");
+                        // show the book 
+                        return Redirect("/Books/Show/" + newBook.BookId);
+                    }
+                    else
+                    {
+                        // if the book is already in the system, then we throw an error 
+                        ModelState.AddModelError("Book", "The book " + newBook.Title + " already exists in the database!");
+
+                        // load the genres in order to populate the dropdown list in the view
+                        newBook.GenreOptions = getAllGenres();
+                        return View(newBook);
+                    }
+                }
+                else
+                {
+                    // load the genres in order to populate the dropdown list in the view
+                    newBook.GenreOptions = getAllGenres();
+                    return View(newBook);
+                }
             }
-            else
-            {
-                newBook.GenreOptions = getAllGenres();  
-                return View(newBook);   
+            catch (Exception ex) {
+                ModelState.AddModelError("", "An error occurred while saving the book: " + ex.Message);
+
+                // load the genres in order to populate the dropdown list in the view
+                newBook.GenreOptions = getAllGenres();
+
+                return View(newBook);
             }
         }
 
@@ -83,17 +109,26 @@ namespace Codex.Controllers
         {
             Book oldBook = GetBookByID(id);
 
-            if (ModelState.IsValid)
+            try
             {
-                MapAttributes(ref oldBook, editedBook);
-                database.SaveChanges();
+                if (ModelState.IsValid)
+                {
+                    MapAttributes(ref oldBook, editedBook);
+                    database.SaveChanges();
 
-                TempData["message"] = "The book " + oldBook.Title + " was succesfully edited!";
+                    TempData["message"] = "The book " + oldBook.Title + " was succesfully edited!";
 
-                return Redirect("/Books/Show/" + oldBook.BookId);
+                    return Redirect("/Books/Show/" + oldBook.BookId);
+                }
+                else
+                {
+                    return View(oldBook);
+                }
             }
-            else
+            catch (Exception ex)
             {
+
+                ModelState.AddModelError("", "An error occurred while saving the genre: " + ex.Message);
                 return View(oldBook);
             }
         }
@@ -108,7 +143,7 @@ namespace Codex.Controllers
             // remove book form database
             database.Books.Remove(book);
 
-            TempData["message"] = "The book " + book.Title + " was added to the database!"; 
+            TempData["message"] = "The book " + book.Title + " was deleted from the database!"; 
 
             // saving the changes made 
             database.SaveChanges();
@@ -128,6 +163,12 @@ namespace Codex.Controllers
         {
             Book book = database.Books.FirstOrDefault(book => book.BookId == id);
             return book;
+        }
+
+        private Book GetBookByTitle(string title)
+        {
+            Book book = database.Books.FirstOrDefault(book => book.Title == title);
+            return book; 
         }
 
         private void MapAttributes(ref Book destination, Book source)
@@ -182,6 +223,11 @@ namespace Codex.Controllers
             }
 
             return selectList;
+        }
+
+        private bool isBookUnique(Book book)
+        {
+            return GetBookByTitle(book.Title) != null;
         }
 
     }
