@@ -2,6 +2,8 @@
 
 <h2>Edit @Model.Name genre</h2>
 
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
 <form method="post" action="/genres/edit/@Model.GenreId">
     <div class="form-group">
         <label asp-for="Name">Name:</label>
