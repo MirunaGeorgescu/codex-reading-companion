@@ -1,0 +1,14 @@
+﻿@model Codex.Models.Genre
+
+<h2>Edit @Model.Name genre</h2>
+
+<form method="post" action="/genres/edit/@Model.GenreId">
+    <div class="form-group">
+        <label asp-for="Name">Name:</label>
+        <input asp-for="Name" type="text" class="form-control" value="@Model.Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-light">Edit genre!</button>
+</form> 
