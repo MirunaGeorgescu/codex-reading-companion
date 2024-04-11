@@ -2,6 +2,7 @@
 using Codex.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 
 namespace Codex.Controllers
@@ -35,7 +36,8 @@ namespace Codex.Controllers
         [HttpGet("Show/{id:int}")]
         public IActionResult Show(int id)
         {
-            Book book = GetBookByID(id);
+            Book book = database.Books.Include(b => b.Genre).FirstOrDefault(b => b.BookId == id);
+
             return View(book);
         }
 

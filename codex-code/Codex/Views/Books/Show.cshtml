@@ -14,7 +14,11 @@
     <div class="col-md-8" style="overflow-y: auto; max-height: 80vh; padding-left: 20px;">
         <div class="card" style="width: 100%;">
             <div class="card-body">
-                <h5 class="card-title">Rating: @Model.Rating</h5>
+                <h5 class="card-title">Rating @Model.Rating</h5>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Genre</h5>
+                <p class=" card-text"> @Model.Genre.Name</p>
             </div>
             <div class="card-body">
                 <h5 class="card-title">Synopsis</h5>
@@ -26,12 +30,14 @@
             </div>
             
             <div class="card-footer">
-                <a href="/Books/Edit/@Model.BookId" class="btn btn-outline-secondary">Edit</a>
-
-                <form method="post" action="/Books/Delete/@Model.BookId">
-                    <button class="btn btn-outline-danger" type="submit">Delete</button>
-                </form>
-               
+               <div class="row">
+                   <div class="col">
+                        <a href="/Books/Edit/@Model.BookId" class="btn btn-outline-secondary">Edit</a>
+                        <form method="post" action="/Books/Delete/@Model.BookId" style="display: inline;">
+                            <button class="btn btn-outline-danger" type="submit">Delete</button>
+                        </form>
+                   </div>
+               </div>
             </div>
         </div>
     </div>
