@@ -36,7 +36,10 @@ namespace Codex.Controllers
         [HttpGet("Show/{id:int}")]
         public IActionResult Show(int id)
         {
-            Book book = database.Books.Include(b => b.Genre).FirstOrDefault(b => b.BookId == id);
+            Book book = database.Books
+                .Include(b => b.Genre)
+                .Include(b => b.Reviews)
+                .FirstOrDefault(b => b.BookId == id);
 
             return View(book);
         }

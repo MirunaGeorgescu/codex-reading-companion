@@ -33,6 +33,8 @@ namespace Codex.Models
         [Required(ErrorMessage = "The cover image is required!")]
         public string CoverImage { get; set; }
 
+        public virtual ICollection<Review>? Reviews { get; set; }
+
         // options for the genre dropt-down list
         [NotMapped]
         public IEnumerable<SelectListItem>? GenreOptions{ get; set; }

@@ -9,6 +9,7 @@
 <br />
 
 <div class="row">
+    @*Displaying the cover image, title and author on the left of the page*@
     <div class="col-md-4">
         <div class="card" style="width: 100%; position: sticky; top: 0;">
             <img src="@Model.CoverImage" alt="@Model.Title Cover Image" style="max-width: 100%; height: auto;" />
@@ -19,6 +20,7 @@
         </div>
     </div>
 
+    @*Displaying the rest of the book details on the right*@
     <div class="col-md-8" style="overflow-y: auto; max-height: 80vh; padding-left: 20px;">
         <div class="card" style="width: 100%;">
             <div class="card-body">
@@ -36,16 +38,56 @@
                 <h5 class="card-title">Publication Date</h5>
                 <p class="card-text">@Model.PublicationDate</p>
             </div>
-            
+
             <div class="card-footer">
-               <div class="row">
-                   <div class="col">
+                <div class="row">
+                    <div class="col">
                         <a href="/Books/Edit/@Model.BookId" class="btn btn-outline-secondary">Edit</a>
                         <form method="post" action="/Books/Delete/@Model.BookId" style="display: inline;">
                             <button class="btn btn-outline-danger" type="submit">Delete</button>
                         </form>
-                   </div>
-               </div>
+                    </div>
+                </div>
+            </div>
+            </br>
+
+            @*Displaying reviews*@
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col"><h3>Reviews</h3></div>
+                        <div class="col text-right">
+                            <a href="/Reviews/New?bookId=@Model.BookId" class="btn btn-outline-secondary"><i class="bi bi-plus-circle"></i> Add Review</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if(Model.Reviews != null)
+                    {
+                        // if there are reviews
+                        @foreach (var review in Model.Reviews)
+                        {
+                            // displaying those reviews in a card 
+                            <div class="card mb-3">
+                                <div class="card-header">User: @*@review.User.UserName*@ </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Rating: @review.Rating/5</h5>
+                                    <p class="card-text">@review.Comment</p>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    Review Date: @review.Date
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        // if there are no reviews then a message is displayed
+                        <div class="card-text">
+                            There are no reviews for this book yet.
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
