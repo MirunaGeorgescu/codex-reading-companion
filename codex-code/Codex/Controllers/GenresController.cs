@@ -91,7 +91,7 @@ namespace Codex.Controllers
                     if (isGenreUnique(newGenre))
                     {
                         // if the new genre is valid then we map the attributes to the old genre and save the changes 
-                        MapAttributes(ref oldGenre, newGenre);
+                        mapGenreAttributes(ref oldGenre, newGenre);
                         database.SaveChanges();
 
                         TempData["message"] = "The genre " + oldGenre.Name + " was succesfully edited!";
@@ -148,7 +148,7 @@ namespace Codex.Controllers
             return database.Genres.FirstOrDefault(genre => genre.GenreId == id); 
         }
 
-        private void MapAttributes(ref Genre destination, Genre source)
+        private void mapGenreAttributes(ref Genre destination, Genre source)
         {
             destination.Name = source.Name;
         }

@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Codex.Models.ApplicationUser>
+
+<div class="row">
+    @foreach (var user in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="@user.ProfilePhoto" class="card-img-top rounded-circle" alt="Profile Picture">
+                <div class="card-body">
+                    <h5 class="card-title">@user.Name</h5>
+                    <p class="card-text">Email: @user.Email</p>
+                    <a href="@Url.Action("Details", "Profile", new { id = user.Id })" class="btn btn-primary">View Profile</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

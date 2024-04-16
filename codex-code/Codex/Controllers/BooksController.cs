@@ -103,7 +103,7 @@ namespace Codex.Controllers
         public IActionResult Edit(int id)
         {
             // finding the book in the database
-            var book = GetBookByID(id);
+            var book = getBookById(id);
 
             // load the genres in order to populate the dropdown list in the view
             book.GenreOptions = getAllGenres();
@@ -115,7 +115,7 @@ namespace Codex.Controllers
         [HttpPost("Edit/{id:int}")]
         public IActionResult Edit(int id, Book editedBook)
         {
-            Book oldBook = GetBookByID(id);
+            Book oldBook = getBookById(id);
 
             try
             {
@@ -123,7 +123,7 @@ namespace Codex.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        MapAttributes(ref oldBook, editedBook);
+                        mapBookAttributes(ref oldBook, editedBook);
                         database.SaveChanges();
 
                         TempData["message"] = "The book " + oldBook.Title + " was succesfully edited!";
@@ -155,7 +155,7 @@ namespace Codex.Controllers
         public ActionResult Delete(int id)
         {
             // find book based on id
-            Book book = GetBookByID(id);
+            Book book = getBookById(id);
 
             // remove book form database
             database.Books.Remove(book);
@@ -168,7 +168,7 @@ namespace Codex.Controllers
         }
 
         // retrieving all the books from the database
-        private IEnumerable<Book> GetAllBooks()
+        private IEnumerable<Book> getAllBooks()
         {
             List<Book> allBooks = database.Books.ToList();
             return allBooks;
@@ -176,19 +176,19 @@ namespace Codex.Controllers
         }
 
         // retrieving a certain book from the database knowing the id
-        private Book GetBookByID(int id)
+        private Book getBookById(int id)
         {
             Book book = database.Books.FirstOrDefault(book => book.BookId == id);
             return book;
         }
 
-        private Book GetBookByTitle(string title)
+        private Book getBookByTitle(string title)
         {
             Book book = database.Books.FirstOrDefault(book => book.Title == title);
             return book; 
         }
 
-        private void MapAttributes(ref Book destination, Book source)
+        private void mapBookAttributes(ref Book destination, Book source)
         {
             destination.Title = source.Title;
             destination.Author = source.Author;
@@ -201,7 +201,7 @@ namespace Codex.Controllers
         private IEnumerable<Book> paginateBooks(int pageNumber)
         {
             // getting all the books from the database
-            var allBooks = GetAllBooks();
+            var allBooks = getAllBooks();
             double bookCount = allBooks.Count();
 
             // calculating the total number of pages
@@ -244,7 +244,7 @@ namespace Codex.Controllers
 
         private bool isBookUnique(Book book)
         {
-            return GetBookByTitle(book.Title) != null;
+            return getBookByTitle(book.Title) != null;
         }
 
     }
