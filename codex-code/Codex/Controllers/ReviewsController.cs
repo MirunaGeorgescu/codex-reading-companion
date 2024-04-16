@@ -119,6 +119,29 @@ namespace Codex.Controllers
 
 
         }
+
+        [HttpPost("Reviews/Delete/{reviewId:int}")]
+        public ActionResult Delete(int reviewId)
+        {
+            // find review in the database 
+            Review review = GetReviewById(reviewId); 
+
+            // remove the review form the database
+            database.Reviews.Remove(review);
+
+
+            // update the book rating after deleting the review 
+            Book book = getBookById((int)review.BookId);
+            updateBookRating(-review.Rating, ref book); 
+
+            database.SaveChanges();
+
+            TempData["message"] = "Your review was successfully deleted!";
+
+            return RedirectToAction("Show", "Books", new { id = review.BookId });
+        }
+
+
         private Book getBookById(int bookId)
         {
             Book book = database.Books
