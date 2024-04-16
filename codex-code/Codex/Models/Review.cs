@@ -17,7 +17,7 @@ namespace Codex.Models
         public DateTime Date { get; set; }
 
         public string? UserId { get; set; }
-        public virtual IdentityUser? User { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
         public int? BookId { get; set; }
         public virtual Book? Book { get; set;}

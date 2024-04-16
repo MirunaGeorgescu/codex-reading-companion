@@ -12,6 +12,7 @@ namespace Codex.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Book> Books { get; set; }
         public DbSet<Genre> Genres { get; set;  }
         public DbSet<Review> Reviews { get; set; }
