@@ -69,7 +69,56 @@ namespace Codex.Controllers
             }
         }
 
+        // displaying the edit form for a book
+        [HttpGet("Reviews/Edit/{reviewId:int}")]
+        public IActionResult Edit(int reviewId)
+        
+        
+        {
+            Review review  = GetReviewById(reviewId);
+            return View(review);
+        }
 
+        [HttpPost]
+        public IActionResult Edit(int reviewId, Review updatedReview)
+        {
+            Review existingReview = GetReviewById(reviewId);
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // finding the book in the database in order to be able to update the rating
+                    int bookId = (int)existingReview.BookId;
+                    Book book = getBookById(bookId);
+
+                    // updating the review
+                    mapReviewAttributes(ref existingReview, updatedReview);
+
+                    // updating the rating of the book if the rating has changed 
+                    if(existingReview.Rating != updatedReview.Rating)
+                    {
+                        updateBookRating(updatedReview.Rating, ref book);
+                    }
+
+                    database.SaveChanges();
+                    TempData["message"] = "Your review was successfully updated!";
+
+                    return RedirectToAction("Show", "Books", new { id = bookId });
+                }
+                else
+                {
+                    return View(updatedReview);
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "An error occurred while saving the review: " + ex.Message);
+                return View(updatedReview); 
+            }
+
+
+        }
         private Book getBookById(int bookId)
         {
             Book book = database.Books
@@ -112,6 +161,17 @@ namespace Codex.Controllers
 
                 return alreadyExistingReview != null;
             }
+        }
+
+        private Review GetReviewById(int reviewId)
+        {
+            return database.Reviews.FirstOrDefault(review => review.ReviewId == reviewId); 
+        }
+
+        private void mapReviewAttributes(ref Review destination, Review source)
+        {
+            destination.Rating = source.Rating;
+            destination.Comment = source.Comment;
         }
     }
 }
