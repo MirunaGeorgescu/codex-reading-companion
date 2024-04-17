@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Codex.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240417180351_AddShelfModel")]
-    partial class AddShelfModel
+    [Migration("20240417181211_AddShelves")]
+    partial class AddShelves
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -210,7 +210,7 @@ namespace Codex.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Shelfs");
+                    b.ToTable("Shelves");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

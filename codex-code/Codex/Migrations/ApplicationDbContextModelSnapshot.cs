@@ -207,7 +207,7 @@ namespace Codex.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Shelfs");
+                    b.ToTable("Shelves");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
