@@ -31,8 +31,19 @@ namespace Codex.Controllers
         public IActionResult Index()
         {
            IEnumerable<ApplicationUser> allUsers = getAllUsers();
-           return View( allUsers );
+           return View(allUsers);
+        }
 
+        // for displaying just one of the users
+        public IActionResult Show(string id)
+        {
+            var user = getUserById(id); 
+            return View(user);
+        }
+
+        private ApplicationUser getUserById(string id)
+        {
+            return database.ApplicationUsers.FirstOrDefault(user => user.Id == id); 
         }
 
         private IEnumerable<ApplicationUser> getAllUsers()

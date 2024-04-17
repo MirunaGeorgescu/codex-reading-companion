@@ -1,0 +1,24 @@
+﻿@model Codex.Models.ApplicationUser
+
+<div class="card">
+    <div class="row no-gutters">
+        @*display profile picture*@
+        <div class="col-md-4">
+            <img src="@Model.ProfilePhoto" class="card-img" style="width: 150px; height: 150px;" alt="Profile Picture">
+        </div>
+
+        @*display info*@
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Name</h5>
+                <p class="card-text">Email: @Model.Email</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer">
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+</div>
