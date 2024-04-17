@@ -131,6 +131,11 @@ namespace Codex.Areas.Identity.Pages.Account
                     ProfilePhoto = Input.ProfilePhoto
                 };
 
+                if(user.ProfilePhoto == null)
+                {
+                    user.UseDefaultProfilePictureUrl(); 
+                }
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
