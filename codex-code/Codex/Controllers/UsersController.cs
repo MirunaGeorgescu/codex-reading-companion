@@ -41,6 +41,18 @@ namespace Codex.Controllers
             return View(user);
         }
 
+        // deleting a user 
+        public IActionResult Delete(string id)
+        {
+            var user = getUserById(id);
+
+            // remove user from database and save changes 
+            database.Remove(user);
+            database.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
         private ApplicationUser getUserById(string id)
         {
             return database.ApplicationUsers.FirstOrDefault(user => user.Id == id); 
