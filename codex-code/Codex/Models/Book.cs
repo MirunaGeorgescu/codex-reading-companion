@@ -35,6 +35,8 @@ namespace Codex.Models
 
         public virtual ICollection<Review>? Reviews { get; set; }
 
+        public virtual ICollection<BookOnShelf>? BooksOnShelves {  get; set; } 
+
         // options for the genre dropt-down list
         [NotMapped]
         public IEnumerable<SelectListItem>? GenreOptions{ get; set; }

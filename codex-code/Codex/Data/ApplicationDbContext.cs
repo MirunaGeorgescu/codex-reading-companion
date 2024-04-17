@@ -18,6 +18,30 @@ namespace Codex.Data
         public DbSet<Genre> Genres { get; set;  }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Shelf> Shelves { get; set; }
+        public DbSet<BookOnShelf> BooksOnShelves { get; set;}
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // MANY-TO-MANY RELATIONSHIPS
+            // BOOKS-SHELVES
+            // primary key made up of BookId and ShelfId
+            modelBuilder.Entity<BookOnShelf>()
+                .HasKey(bs => new { bs.BookId, bs.ShelfId });
+
+            // relationship between books and shelves
+            modelBuilder.Entity<BookOnShelf>()
+                .HasOne(bs => bs.Book)
+                .WithMany(b => b.BooksOnShelves)
+                .HasForeignKey(bs => bs.BookId);
+
+            modelBuilder.Entity<BookOnShelf>()
+                .HasOne(bs => bs.Shelf)
+                .WithMany(s => s.BooksOnShelves)
+                .HasForeignKey(bs => bs.ShelfId);
+        }
 
     }
 }

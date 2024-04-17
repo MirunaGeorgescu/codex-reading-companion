@@ -39,6 +39,7 @@ namespace Codex.Controllers
             Book book = database.Books
                 .Include(b => b.Genre)
                 .Include(b => b.Reviews)
+                    .ThenInclude(r => r.User)
                 .FirstOrDefault(b => b.BookId == id);
 
             return View(book);

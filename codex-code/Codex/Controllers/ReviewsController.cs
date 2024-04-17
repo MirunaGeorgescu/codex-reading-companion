@@ -9,13 +9,24 @@ namespace Codex.Controllers
 {
     public class ReviewsController : Controller
     {
-        private readonly ApplicationDbContext database;
-        //private readonly UserManager<IdentityUser> userManager;
-        //private readonly RoleManager<IdentityRole> roleManager;
 
-        public ReviewsController(ApplicationDbContext context)
+        private readonly ApplicationDbContext database;
+
+        private readonly UserManager<ApplicationUser> userManager;
+
+        private readonly RoleManager<IdentityRole> roleManager;
+
+        public ReviewsController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> _userManager,
+            RoleManager<IdentityRole> _roleManager
+            )
         {
             database = context;
+
+            userManager = _userManager;
+
+            roleManager = _roleManager;
         }
 
         // displaying the form for a new comment 
@@ -23,8 +34,9 @@ namespace Codex.Controllers
        public IActionResult New(int bookId)
         {
             // making sure the user has not already left a review for the book
-            string userId = null; 
-            if(!hasAlreadyReviewedBook(userId, bookId))
+            var userId = userManager.GetUserId(User); 
+
+            if (!hasAlreadyReviewedBook(userId, bookId))
             {
                 Review newReview = new Review();
                 newReview.BookId = bookId;
@@ -53,7 +65,7 @@ namespace Codex.Controllers
                 newReview.Date = DateTime.Now;
 
                 // setting the user who left the review 
-                //newReview.UserId = userManager.GetUserId(User);
+                newReview.UserId = userManager.GetUserId(User);
 
                 // adding the new review to the database and saving the changes 
                 database.Add(newReview);
@@ -72,10 +84,8 @@ namespace Codex.Controllers
         // displaying the edit form for a book
         [HttpGet("Reviews/Edit/{reviewId:int}")]
         public IActionResult Edit(int reviewId)
-        
-        
         {
-            Review review  = GetReviewById(reviewId);
+            Review review = GetReviewById(reviewId);
             return View(review);
         }
 
@@ -195,6 +205,7 @@ namespace Codex.Controllers
         {
             destination.Rating = source.Rating;
             destination.Comment = source.Comment;
+            destination.UserId = userManager.GetUserId(User);
         }
     }
 }

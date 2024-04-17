@@ -17,6 +17,6 @@ namespace Codex.Models
         public virtual ApplicationUser? User { get; set; }
 
         // the books that are on the shelf
-        // public ICollection<BookOnShelf> ShelfBooks { get; set; }
+        public ICollection<BookOnShelf> BooksOnShelves { get; set; }
     }
 }
