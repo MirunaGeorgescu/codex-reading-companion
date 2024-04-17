@@ -5,9 +5,19 @@
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-    </li>
+    // getting the user so we can display the name and profile picture
+    var user = await UserManager.GetUserAsync(User);
+
+        <li class="nav-item">
+            <div class="d-flex align-items-center">
+                <div class="p-1">
+                    <img src="@user.ProfilePhoto" class="rounded-circle" style="width: auto; height: 40px; max-width: 40px; max-height: 40px;" alt="Profile Picture" />
+                </div>
+                <div class="p-1">
+                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello, @user.Name!</a>
+                </div>
+            </div>
+        </li>
     <li class="nav-item">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
             <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>

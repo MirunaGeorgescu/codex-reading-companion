@@ -71,6 +71,11 @@ namespace Codex.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            // the username of the person 
+            [Required]
+            [Display(Name = "Name")]
+            public string Name { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -98,6 +103,11 @@ namespace Codex.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            // the profile photo 
+            [Display(Name = "Profile Photo URL")]
+            public string ProfilePhoto { get; set; }
+
         }
 
 
@@ -113,10 +123,14 @@ namespace Codex.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    Name = Input.Name,
+                    ProfilePhoto = Input.ProfilePhoto
+                };
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
