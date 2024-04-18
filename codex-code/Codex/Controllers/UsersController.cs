@@ -2,6 +2,8 @@
 using Codex.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Reflection.Metadata;
 
 namespace Codex.Controllers
 {
@@ -53,6 +55,13 @@ namespace Codex.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Profile(string id)
+        {
+            var user = getUserById(id);
+
+            return View(user);
+        }
+
         private ApplicationUser getUserById(string id)
         {
             return database.ApplicationUsers.FirstOrDefault(user => user.Id == id); 
@@ -62,6 +71,34 @@ namespace Codex.Controllers
         {
             List<ApplicationUser> allUsers = database.ApplicationUsers.ToList(); 
             return allUsers;
+        }
+
+        private List<Book> getFiveStarBooks(string userId)
+        {
+            var user = getUserById(userId);
+
+           return database.Reviews
+                        .Where(review => review.UserId == userId && review.Rating == 5)
+                        .Select(review => review.Book)
+                        .ToList();
+        }
+
+        private void populateFavouriteBooksOptions(string userId)
+        {
+            var user = getUserById(userId); 
+            List<Book> fiveStarBooks = getFiveStarBooks(userId);
+
+            user.FavoriteBooksOptions = ConvertToSelectList(fiveStarBooks); 
+        }
+
+        // converiting a list of books to a select list
+        private IEnumerable<SelectListItem> ConvertToSelectList(IEnumerable<Book> books)
+        {
+            return books.Select(book => new SelectListItem
+            {
+                Text = book.Title, 
+                Value = book.BookId.ToString() 
+            });
         }
     }
 }
