@@ -69,7 +69,13 @@
                         {
                             // displaying those reviews in a card 
                             <div class="card mb-3">
-                                <div class="card-header">User: @review.User.Name </div>
+                                @*when clicked, the link redirects to the users profile*@
+                                <div class="card-header">
+                                    <a href="/Users/Show/@review.UserId" class="text-decoration-none" style="color:inherit; text-decoration: none;">
+                                        <img src="@review.User.ProfilePhoto" class="rounded-circle" style="width: 30px; height: 30px;" alt="Profile Picture" />
+                                         @review.User.Name
+                                    </a>
+                                </div>
                                 <div class="card-body">
                                     <h5 class="card-title">Rating: @review.Rating/5</h5>
                                     <p class="card-text">@review.Comment</p>
