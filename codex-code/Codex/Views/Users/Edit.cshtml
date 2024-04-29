@@ -1,0 +1,29 @@
+﻿@model Codex.Models.ApplicationUser
+
+<h2>Edit your profile!</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form method="post" asp-action="Edit" asp-controller="Users">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Name">Name:</label>
+        <input asp-for="Name" type="text" class="form-control" value="@Model.Name" />
+        @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger" })
+    </div>
+
+    <br />
+    <div class="form-group">
+        <label asp-for="ProfilePhoto">ProfilePhoto:</label>
+        <input asp-for="ProfilePhoto" type="text" class="form-control" value="@Model.ProfilePhoto" />
+        @Html.ValidationMessageFor(m => m.ProfilePhoto, null, new { @class = "text-danger" })
+    </div>
+
+    <br />
+    <div class="form-group d-flex justify-content-between">
+        <a class="btn btn-outline-secondary" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Advanced Settings</a>
+        <button type="submit" class="btn btn-outline-secondary">Save Changes</button>
+    </div>
+
+</form>

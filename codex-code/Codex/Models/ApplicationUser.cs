@@ -14,8 +14,9 @@ namespace Codex.Models
         public virtual ICollection<Review>? Reviews { get; set; }
         public virtual ICollection<Book>? FavoriteBooks { get; set; }
         //public virtual ICollection<Badge>? Badges { get; set; }
+        
+        public virtual ICollection<Shelf>? Shelves { get; set; }
 
-        public virtual ICollection<Shelf> Shelves { get; set; }
         [NotMapped]
         public IEnumerable<SelectListItem>? AllRoles { get; set; }
 
@@ -28,6 +29,6 @@ namespace Codex.Models
         }
 
         [NotMapped]
-        public IEnumerable<SelectListItem> FavoriteBooksOptions { get; set; }
+        public IEnumerable<SelectListItem>? FavoriteBooksOptions { get; set; }
     }
 }

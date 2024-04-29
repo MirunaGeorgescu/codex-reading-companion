@@ -37,6 +37,7 @@ namespace Codex.Controllers
         }
 
         // for displaying just one of the users
+        [HttpGet("Show/{id}")]
         public IActionResult Show(string id)
         {
             var user = getUserById(id); 
@@ -44,6 +45,7 @@ namespace Codex.Controllers
         }
 
         // deleting a user 
+        [HttpPost("Delete/{id}")]
         public IActionResult Delete(string id)
         {
             var user = getUserById(id);
@@ -55,6 +57,7 @@ namespace Codex.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet("Profile/{id}")]
         public IActionResult Profile(string id)
         {
             var user = getUserById(id);
@@ -62,9 +65,48 @@ namespace Codex.Controllers
             return View(user);
         }
 
+        // display the form for changing your profile 
+        [HttpGet("Edit/{id}")]
+        public IActionResult Edit(string id)
+        {
+            var user = getUserById(id);
+            return View(user); 
+        }
+
+        // update the users profile and redirect to the profile
+        [HttpPost("Edit/{id}")]
+        public IActionResult Edit(string id, ApplicationUser updatedUserProfile)
+        {
+            ApplicationUser oldUserProfile = getUserById(id);
+
+            try
+            {
+               if(ModelState.IsValid)
+                {
+                    mapUserAttributes(ref oldUserProfile, updatedUserProfile);
+                    database.SaveChanges();
+
+                    TempData["message"] = "Your profile was succesfuly updated";
+
+                    return RedirectToAction("Index", "Users");
+                }
+                else
+                {
+                    return View(oldUserProfile); 
+                }
+                
+            }
+            catch (Exception ex)
+            {
+
+                ModelState.AddModelError("", "An error occurred while updating your profile: " + ex.Message);
+                return View(oldUserProfile);
+            }
+        }
+
         private ApplicationUser getUserById(string id)
         {
-            return database.ApplicationUsers.FirstOrDefault(user => user.Id == id); 
+            return database.Users.Find(id); 
         }
 
         private IEnumerable<ApplicationUser> getAllUsers()
@@ -99,6 +141,13 @@ namespace Codex.Controllers
                 Text = book.Title, 
                 Value = book.BookId.ToString() 
             });
+        }
+
+        // mapping attributes from one user to another 
+        private void mapUserAttributes(ref ApplicationUser destination, ApplicationUser source)
+        {
+            destination.Name = source.Name;
+            destination.ProfilePhoto = source.ProfilePhoto; 
         }
     }
 }

@@ -17,8 +17,16 @@
     </div>
 
     <div class="card-footer">
-        <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
-            <button type="submit" class="btn btn-danger">Delete</button>
-        </form>
+        <div class="row">
+            <div class="col">
+                <a href="@Url.Action("Edit", "Users", new { id = Model.Id })" class="btn btn-outline-secondary">Edit Profile</a>
+            </div>
+            <div class="col">
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+
     </div>
 </div>
