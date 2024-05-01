@@ -40,14 +40,39 @@
             </div>
 
             <div class="card-footer">
-                <div class="row">
-                    <div class="col">
-                        <a href="/Books/Edit/@Model.BookId" class="btn btn-outline-secondary">Edit</a>
-                        <form method="post" action="/Books/Delete/@Model.BookId" style="display: inline;">
-                            <button class="btn btn-outline-danger" type="submit">Delete</button>
-                        </form>
-                    </div>
-                </div>
+
+                
+                    @if (ViewBag.IsEditor || ViewBag.IsAdmin)
+                    {
+                        <div class="row">
+                            <div class="col">
+                                <a href="/Books/Edit/@Model.BookId" class="btn btn-outline-secondary">Edit</a>
+                                <form method="post" action="/Books/Delete/@Model.BookId" style="display: inline;">
+                                    <button class="btn btn-outline-danger" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                
+
+                @if (ViewBag.IsUser)
+                {
+                    <h5 class="card-title">Add Book To Shelf</h5>
+                    <form method="post" action="/Book/AddToShelf">
+                        <input type="hidden" name="BookId" value="@Model.BookId" />
+                        <div class="form-group">
+                            <select class="form-control" id="chosenShelfId" name="chosenShelfId">
+                                <option value="">Select Shelf</option>
+                                @foreach (var shelf in Model.ShelvesOptions)
+                                {
+                                    <option value="@shelf.Value">@shelf.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-outline-secondary">Add to shelf!</button>
+                    </form>
+                }
+
             </div>
             </br>
 
@@ -62,18 +87,18 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    @if(Model.Reviews != null)
+                    @if (Model.Reviews != null)
                     {
                         // if there are reviews
                         @foreach (var review in Model.Reviews)
                         {
-                            // displaying those reviews in a card 
+                            // displaying those reviews in a card
                             <div class="card mb-3">
                                 @*when clicked, the link redirects to the users profile*@
                                 <div class="card-header">
                                     <a href="/Users/Show/@review.UserId" class="text-decoration-none" style="color:inherit; text-decoration: none;">
                                         <img src="@review.User.ProfilePhoto" class="rounded-circle" style="width: 30px; height: 30px;" alt="Profile Picture" />
-                                         @review.User.Name
+                                        @review.User.Name
                                     </a>
                                 </div>
                                 <div class="card-body">

@@ -40,5 +40,9 @@ namespace Codex.Models
         // options for the genre dropt-down list
         [NotMapped]
         public IEnumerable<SelectListItem>? GenreOptions{ get; set; }
+
+        //options for shelves drop down list
+        [NotMapped]
+        public IEnumerable<SelectListItem>? ShelvesOptions { get; set; }
     }
 }

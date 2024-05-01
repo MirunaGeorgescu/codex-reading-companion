@@ -1,5 +1,6 @@
 ﻿using Codex.Data;
 using Codex.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,16 @@ namespace Codex.Controllers
     public class BooksController : Controller
     {
         private readonly ApplicationDbContext database;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
 
-        public BooksController(ApplicationDbContext context)
+        public BooksController(ApplicationDbContext context,
+            UserManager<ApplicationUser> _userManager,
+            RoleManager<IdentityRole> _roleManager)
         {
             database = context;
+            userManager = _userManager;
+            roleManager = _roleManager;
         }
 
         private const int booksPerPage = 9;
@@ -36,11 +43,15 @@ namespace Codex.Controllers
         [HttpGet("Show/{id:int}")]
         public IActionResult Show(int id)
         {
+            setAccessRights(); 
+
             Book book = database.Books
                 .Include(b => b.Genre)
                 .Include(b => b.Reviews)
                     .ThenInclude(r => r.User)
                 .FirstOrDefault(b => b.BookId == id);
+
+            populateShelvesOptions(ref book);
 
             return View(book);
         }
@@ -246,6 +257,44 @@ namespace Codex.Controllers
         private bool isBookUnique(Book book)
         {
             return getBookByTitle(book.Title) != null;
+        }
+
+        private void setAccessRights()
+        {
+            ViewBag.IsAdmin = User.IsInRole("Admin");
+            ViewBag.IsEditor = User.IsInRole("Editor");
+            ViewBag.IsUser = User.IsInRole("User"); 
+            ViewBag.CurrentUser = userManager.GetUserId(User);
+        }
+
+        private ApplicationUser getUserWithShelvesById(string id)
+        {
+            return database.Users
+                    .Include(user => user.Shelves)
+                    .FirstOrDefault(user => user.Id == id);
+        }
+
+        private void populateShelvesOptions(ref Book book)
+        {
+            // get the current user id
+            var userId = userManager.GetUserId(User);
+
+            // get the shelves of that user
+            var userWithShelves = getUserWithShelvesById(userId);
+
+            var shelvesOptions = new List<SelectListItem>();  
+            
+            foreach (var shelf in  userWithShelves.Shelves) {
+
+                var selectListItem = new SelectListItem { 
+                    Value = shelf.ShelfId.ToString(),
+                    Text = shelf.Name
+                };
+
+                shelvesOptions.Add(selectListItem);
+            }
+
+            book.ShelvesOptions = shelvesOptions;
         }
 
     }
