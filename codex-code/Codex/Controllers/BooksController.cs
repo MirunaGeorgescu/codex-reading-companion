@@ -186,15 +186,15 @@ namespace Codex.Controllers
             // convert string to int 
             int.TryParse(selectedShelfValue, out int shelfId);
 
-            // if the book is already on a shelf, move it 
-            if(bookAlreadyOnShelf(bookId, shelfId))
-            {
-                var bookAlreadyOnShelf = database.BooksOnShelves
-                    .Where(b => b.BookId == bookId)
-                    .Where(s => s.ShelfId == shelfId)
-                    .FirstOrDefault();
+            // if the owner of the shelf has already added that book on one
+            // of the shelves, then delete the entry in the table 
+            var alreadyOnShelfId = bookAlreadyOnShelf(bookId, shelfId); 
 
-                database.BooksOnShelves.Remove(bookAlreadyOnShelf); 
+            if(alreadyOnShelfId != -1) {
+                var book = database.BooksOnShelves
+                    .FirstOrDefault(bos => bos.ShelfId == alreadyOnShelfId && bos.BookId == bookId);
+
+                database.BooksOnShelves.Remove(book);
             }
             
             var bookOnShelf = new BookOnShelf
@@ -308,10 +308,37 @@ namespace Codex.Controllers
                     .FirstOrDefault(user => user.Id == id);
         }
 
-        private bool bookAlreadyOnShelf(int bookId, int shelfId)
+        // checks if the given book id is on one of the shelves owend by the user that owns the shelf with shelfId
+        // if it can be found it returnes the id of that shelf, if not -1
+        private int bookAlreadyOnShelf(int bookId, int shelfId)
         {
-           return database.BooksOnShelves
-                .Any(bos => bos.BookId == bookId && bos.ShelfId == shelfId);
+           var shelf = database.Shelves.FirstOrDefault(s => s.ShelfId == shelfId);
+           var userId = shelf.UserId;
+           var userShelves = getShelvesByUserId(userId);
+
+           foreach(var userShelf in userShelves)
+           {
+                var alreadyExistingBook = isSelected(bookId, userShelf.ShelfId); 
+
+                if (alreadyExistingBook)
+                {
+                    return userShelf.ShelfId;
+                }
+           }
+
+            return -1; 
+        }
+
+        private List<Shelf> getShelvesByUserId(string userId)
+        {
+            return database.Shelves
+                .Where(s => s.UserId == userId)
+                .ToList();
+        }
+
+        private bool isSelected(int bookId, int shelfId)
+        {
+            return database.BooksOnShelves.Any(bos => bos.BookId == bookId && bos.ShelfId == shelfId);
         }
 
         private void populateShelvesOptions(ref Book book)
@@ -328,11 +355,12 @@ namespace Codex.Controllers
 
             foreach (var shelf in userWithShelves.Shelves)
             {
+
                 var selectListItem = new SelectListItem
                 {
                     Value = shelf.ShelfId.ToString(),
                     Text = shelf.Name,
-                    Selected = bookAlreadyOnShelf(bookId, shelf.ShelfId)
+                    Selected = isSelected(bookId, shelf.ShelfId)
                 };
                 
                 shelvesOptions.Add(selectListItem);    
