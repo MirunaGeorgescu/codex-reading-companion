@@ -22,13 +22,21 @@
                 @*display shelves*@
                 @if(Model.Shelves != null)
                 {
-                    <h5>@Model.Name's Books</h5>
-                    <ul>
-                        @foreach(var shelf in @Model.Shelves)
+                    <h5>@Model.Name's Shelves</h5>
+                    
+                    <div class="row">
+                        @foreach(var shelf in Model.Shelves)
                         {
-                            <li>@shelf.Name</li>
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@shelf.Name</h5>
+                                        <a href="@Url.Action("Show", "Shelves", new {shelfId = shelf.ShelfId})" class="btn btn-outline-secondary">Show books</a>
+                                    </div>
+                                </div>
+                            </div>
                         }
-                    </ul>
+                    </div>
 
                 }
 
