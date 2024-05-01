@@ -16,7 +16,20 @@
                 @*if the user has set any favorite books then we display them*@
                 @if(Model.FavoriteBooks != null)
                 {
-                    <h5>">@Model.Name's Favorite Books</h5>
+                    <h5>@Model.Name's Favorite Books</h5>
+                }
+
+                @*display shelves*@
+                @if(Model.Shelves != null)
+                {
+                    <h5>@Model.Name's Books</h5>
+                    <ul>
+                        @foreach(var shelf in @Model.Shelves)
+                        {
+                            <li>@shelf.Name</li>
+                        }
+                    </ul>
+
                 }
 
             </div>

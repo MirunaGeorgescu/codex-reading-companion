@@ -20,6 +20,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Codex.Data;
+using Codex.Migrations;
+using System.Runtime.CompilerServices;
 
 namespace Codex.Areas.Identity.Pages.Account
 {
@@ -141,6 +143,7 @@ namespace Codex.Areas.Identity.Pages.Account
                 {
                     user.UseDefaultProfilePictureUrl(); 
                 }
+                
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
@@ -150,12 +153,14 @@ namespace Codex.Areas.Identity.Pages.Account
 
                     await _userManager.AddToRoleAsync(user, "User");
 
+                    // adding the default shelves for the user
+                    CreateDefaultShelvesForUser(user);
+
+                    await _userManager.UpdateAsync(user);
+
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-
-                    // adding the default shelves
-                    AddDefaultShelves(ref user); 
 
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
@@ -209,25 +214,29 @@ namespace Codex.Areas.Identity.Pages.Account
             return (IUserEmailStore<ApplicationUser>)_userStore;
         }
 
-        // method for creating and adding the three default shelves for every user
-        private void AddDefaultShelves(ref ApplicationUser user)
+        // creating the default shelves for the user
+        private void CreateDefaultShelvesForUser(ApplicationUser user)
         {
-            if (user.Shelves == null)
+            var defaultShelves =  new List<Shelf>()
             {
-                user.Shelves = new List<Shelf>();
-            }
-
-            var defaultShelves = new List<Shelf> {
-                new Shelf { Name = "Want To Read", UserId = user.Id },
-                new Shelf { Name = "Read", UserId = user.Id },
-                new Shelf { Name = "Currently Reading", UserId = user.Id }
+                new Shelf() {Name = "Want to read", UserId = user.Id},
+                new Shelf() {Name = "Read", UserId=user.Id},
+                new Shelf() {Name = "Currently reading", UserId=user.Id}
             }; 
 
-            foreach(var shelf in defaultShelves)
+            SaveNewShelves(defaultShelves);
+        }
+
+        // making sure that they are saved in the database
+        private void SaveNewShelves( List<Shelf> shelves )
+        {
+            foreach(Shelf shelf in shelves)
             {
-                user.Shelves.Add(shelf);
+                database.Shelves.Add(shelf); 
             }
 
+            database.SaveChanges();
         }
+
     }
 }

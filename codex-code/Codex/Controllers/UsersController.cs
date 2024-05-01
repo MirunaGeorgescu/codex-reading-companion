@@ -3,6 +3,7 @@ using Codex.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 
 namespace Codex.Controllers
@@ -59,7 +60,7 @@ namespace Codex.Controllers
 
         public IActionResult Profile(string id)
         {
-            var user = getUserById(id);
+            var user = getUserWithShelvesById(id);
 
             return View(user);
         }
@@ -106,6 +107,13 @@ namespace Codex.Controllers
         private ApplicationUser getUserById(string id)
         {
             return database.Users.Find(id); 
+        }
+
+        private ApplicationUser getUserWithShelvesById(string id)
+        {
+            return database.Users
+                    .Include(user => user.Shelves)
+                    .FirstOrDefault(user => user.Id == id);
         }
 
         private IEnumerable<ApplicationUser> getAllUsers()
