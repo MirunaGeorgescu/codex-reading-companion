@@ -65,6 +65,7 @@
                                 <option value="">Select Shelf</option>
                                 @foreach (var shelf in Model.ShelvesOptions)
                                 {
+                                    // if the book has been placed on a shelf before show it as selected
                                     @if(shelf.Selected)
                                     {
                                         <option value="@shelf.Value" selected>@shelf.Text</option>

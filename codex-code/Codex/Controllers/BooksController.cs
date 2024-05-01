@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using System;
 
 namespace Codex.Controllers
 {
@@ -185,6 +186,17 @@ namespace Codex.Controllers
             // convert string to int 
             int.TryParse(selectedShelfValue, out int shelfId);
 
+            // if the book is already on a shelf, move it 
+            if(bookAlreadyOnShelf(bookId, shelfId))
+            {
+                var bookAlreadyOnShelf = database.BooksOnShelves
+                    .Where(b => b.BookId == bookId)
+                    .Where(s => s.ShelfId == shelfId)
+                    .FirstOrDefault();
+
+                database.BooksOnShelves.Remove(bookAlreadyOnShelf); 
+            }
+            
             var bookOnShelf = new BookOnShelf
             {
                 BookId = bookId,
@@ -296,6 +308,12 @@ namespace Codex.Controllers
                     .FirstOrDefault(user => user.Id == id);
         }
 
+        private bool bookAlreadyOnShelf(int bookId, int shelfId)
+        {
+           return database.BooksOnShelves
+                .Any(bos => bos.BookId == bookId && bos.ShelfId == shelfId);
+        }
+
         private void populateShelvesOptions(ref Book book)
         {
             var bookId = book.BookId;
@@ -310,36 +328,15 @@ namespace Codex.Controllers
 
             foreach (var shelf in userWithShelves.Shelves)
             {
-                var bookAlreadOnShelf = database.BooksOnShelves
-                    .Where(b => b.BookId == bookId)
-                    .Where(s => s.ShelfId == shelf.ShelfId); 
-
-                if(bookAlreadOnShelf != null)
+                var selectListItem = new SelectListItem
                 {
-                    var selectListItem = new SelectListItem
-                    {
-                        Value = shelf.ShelfId.ToString(),
-                        Text = shelf.Name,
-                        Selected = true
-                    };
-
-                    shelvesOptions.Add(selectListItem);
-                }
-                else
-                {
-                    var selectListItem = new SelectListItem
-                    {
-                        Value = shelf.ShelfId.ToString(),
-                        Text = shelf.Name,
-                        Selected = false
-                    };
-
-                    shelvesOptions.Add(selectListItem);
-                }
-
+                    Value = shelf.ShelfId.ToString(),
+                    Text = shelf.Name,
+                    Selected = bookAlreadyOnShelf(bookId, shelf.ShelfId)
+                };
                 
+                shelvesOptions.Add(selectListItem);    
             }
-
 
             book.ShelvesOptions = shelvesOptions;
         }
