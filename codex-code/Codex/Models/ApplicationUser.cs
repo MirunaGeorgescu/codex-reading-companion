@@ -15,7 +15,7 @@ namespace Codex.Models
         public virtual ICollection<Book>? FavoriteBooks { get; set; }
         //public virtual ICollection<Badge>? Badges { get; set; }
         
-        public virtual ICollection<Shelf>? Shelves { get; set; }
+        public virtual ICollection<Shelf>? Shelves{ get; set; }
 
         [NotMapped]
         public IEnumerable<SelectListItem>? AllRoles { get; set; }
@@ -23,12 +23,12 @@ namespace Codex.Models
         // default profile picture 
         private static readonly string DefaultProfilePictureUrl = "https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=";
 
+        [NotMapped]
+        public IEnumerable<SelectListItem>? FavoriteBooksOptions { get; set; }
+
         public void UseDefaultProfilePictureUrl()
         {
             ProfilePhoto = DefaultProfilePictureUrl;
         }
-
-        [NotMapped]
-        public IEnumerable<SelectListItem>? FavoriteBooksOptions { get; set; }
     }
 }

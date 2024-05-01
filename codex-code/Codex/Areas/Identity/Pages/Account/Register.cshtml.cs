@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Codex.Data;
 
 namespace Codex.Areas.Identity.Pages.Account
 {
@@ -31,12 +32,15 @@ namespace Codex.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
+        private readonly ApplicationDbContext database;
+
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +48,7 @@ namespace Codex.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            database = context;
         }
 
         /// <summary>
@@ -131,6 +136,7 @@ namespace Codex.Areas.Identity.Pages.Account
                     ProfilePhoto = Input.ProfilePhoto
                 };
 
+                // adding the default profile picture 
                 if(user.ProfilePhoto == null)
                 {
                     user.UseDefaultProfilePictureUrl(); 
@@ -147,6 +153,10 @@ namespace Codex.Areas.Identity.Pages.Account
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                    // adding the default shelves
+                    AddDefaultShelves(ref user); 
+
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
@@ -197,6 +207,27 @@ namespace Codex.Areas.Identity.Pages.Account
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
             return (IUserEmailStore<ApplicationUser>)_userStore;
+        }
+
+        // method for creating and adding the three default shelves for every user
+        private void AddDefaultShelves(ref ApplicationUser user)
+        {
+            if (user.Shelves == null)
+            {
+                user.Shelves = new List<Shelf>();
+            }
+
+            var defaultShelves = new List<Shelf> {
+                new Shelf { Name = "Want To Read", UserId = user.Id },
+                new Shelf { Name = "Read", UserId = user.Id },
+                new Shelf { Name = "Currently Reading", UserId = user.Id }
+            }; 
+
+            foreach(var shelf in defaultShelves)
+            {
+                user.Shelves.Add(shelf);
+            }
+
         }
     }
 }
