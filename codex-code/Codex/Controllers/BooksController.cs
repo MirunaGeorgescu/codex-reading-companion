@@ -4,6 +4,8 @@ using Codex.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 
@@ -30,7 +32,7 @@ namespace Codex.Controllers
         public IActionResult Index(int? page)
         {
             //if theres no current page, we're on page 1
-            int pageNumber = page ?? 1; 
+            int pageNumber = page ?? 1;
 
             // the books that fit on a page
             var paginatedBooks = paginateBooks(pageNumber);
@@ -41,7 +43,7 @@ namespace Codex.Controllers
         // show method for a certain book 
         public IActionResult Show(int id)
         {
-            setAccessRights(); 
+            setAccessRights();
 
             Book book = database.Books
                 .Include(b => b.Genre)
@@ -55,10 +57,11 @@ namespace Codex.Controllers
         }
 
         // displaying the form for adding a new book
-        public IActionResult New() {
-           
+        public IActionResult New()
+        {
+
             Book newBook = new Book();
-            newBook.GenreOptions = getAllGenres(); 
+            newBook.GenreOptions = getAllGenres();
 
             return View(newBook);
         }
@@ -97,7 +100,8 @@ namespace Codex.Controllers
                     return View(newBook);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 ModelState.AddModelError("", "An error occurred while saving the book: " + ex.Message);
 
                 // load the genres in order to populate the dropdown list in the view
@@ -116,7 +120,7 @@ namespace Codex.Controllers
             // load the genres in order to populate the dropdown list in the view
             book.GenreOptions = getAllGenres();
 
-            return View(book); 
+            return View(book);
 
         }
 
@@ -168,7 +172,7 @@ namespace Codex.Controllers
             // remove book form database
             database.Books.Remove(book);
 
-            TempData["message"] = "The book " + book.Title + " was deleted from the database!"; 
+            TempData["message"] = "The book " + book.Title + " was deleted from the database!";
 
             // saving the changes made 
             database.SaveChanges();
@@ -185,14 +189,14 @@ namespace Codex.Controllers
             {
                 BookId = bookId,
                 ShelfId = shelfId
-            }; 
+            };
 
             database.BooksOnShelves.Add(bookOnShelf);
             database.SaveChanges();
 
             TempData["message"] = "The book was added to the shelf!";
 
-            return RedirectToAction("Show", "Books", new {id =  bookId});
+            return RedirectToAction("Show", "Books", new { id = bookId });
 
 
         }
@@ -215,7 +219,7 @@ namespace Codex.Controllers
         private Book getBookByTitle(string title)
         {
             Book book = database.Books.FirstOrDefault(book => book.Title == title);
-            return book; 
+            return book;
         }
 
         private void mapBookAttributes(ref Book destination, Book source)
@@ -224,7 +228,7 @@ namespace Codex.Controllers
             destination.Author = source.Author;
             destination.Genre = source.Genre;
             destination.PublicationDate = source.PublicationDate;
-            destination.Synopsis = source.Synopsis; 
+            destination.Synopsis = source.Synopsis;
             destination.CoverImage = source.CoverImage;
         }
 
@@ -235,7 +239,7 @@ namespace Codex.Controllers
             double bookCount = allBooks.Count();
 
             // calculating the total number of pages
-            int totalPages = (int)Math.Ceiling(bookCount / booksPerPage); 
+            int totalPages = (int)Math.Ceiling(bookCount / booksPerPage);
 
             // calculating how many books to skip based on the number of pages
             int skip = (pageNumber - 1) * booksPerPage;
@@ -281,7 +285,7 @@ namespace Codex.Controllers
         {
             ViewBag.IsAdmin = User.IsInRole("Admin");
             ViewBag.IsEditor = User.IsInRole("Editor");
-            ViewBag.IsUser = User.IsInRole("User"); 
+            ViewBag.IsUser = User.IsInRole("User");
             ViewBag.CurrentUser = userManager.GetUserId(User);
         }
 
@@ -294,23 +298,48 @@ namespace Codex.Controllers
 
         private void populateShelvesOptions(ref Book book)
         {
+            var bookId = book.BookId;
+
             // get the current user id
             var userId = userManager.GetUserId(User);
 
             // get the shelves of that user
             var userWithShelves = getUserWithShelvesById(userId);
 
-            var shelvesOptions = new List<SelectListItem>();  
-            
-            foreach (var shelf in  userWithShelves.Shelves) {
+            var shelvesOptions = new List<SelectListItem>();
 
-                var selectListItem = new SelectListItem { 
-                    Value = shelf.ShelfId.ToString(),
-                    Text = shelf.Name
-                };
+            foreach (var shelf in userWithShelves.Shelves)
+            {
+                var bookAlreadOnShelf = database.BooksOnShelves
+                    .Where(b => b.BookId == bookId)
+                    .Where(s => s.ShelfId == shelf.ShelfId); 
 
-                shelvesOptions.Add(selectListItem);
+                if(bookAlreadOnShelf != null)
+                {
+                    var selectListItem = new SelectListItem
+                    {
+                        Value = shelf.ShelfId.ToString(),
+                        Text = shelf.Name,
+                        Selected = true
+                    };
+
+                    shelvesOptions.Add(selectListItem);
+                }
+                else
+                {
+                    var selectListItem = new SelectListItem
+                    {
+                        Value = shelf.ShelfId.ToString(),
+                        Text = shelf.Name,
+                        Selected = false
+                    };
+
+                    shelvesOptions.Add(selectListItem);
+                }
+
+                
             }
+
 
             book.ShelvesOptions = shelvesOptions;
         }

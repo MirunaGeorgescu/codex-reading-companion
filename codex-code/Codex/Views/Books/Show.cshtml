@@ -65,7 +65,14 @@
                                 <option value="">Select Shelf</option>
                                 @foreach (var shelf in Model.ShelvesOptions)
                                 {
-                                    <option value="@shelf.Value">@shelf.Text</option>
+                                    @if(shelf.Selected)
+                                    {
+                                        <option value="@shelf.Value" selected>@shelf.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@shelf.Value">@shelf.Text</option>
+                                    }
                                 }
                             </select>
                         </div>
