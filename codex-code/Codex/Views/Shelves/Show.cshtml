@@ -16,7 +16,7 @@
                         <h4 class="card-title">@bookOnShelf.Book.Title</h4>
                         <h5 class="card-subtitle mb-2 text-muted">by @bookOnShelf.Book.Author</h5>
                         <p class="card-text">Rating: @bookOnShelf.Book.Rating</p>
-                        <a class="btn btn-light" href="Books/Show/@bookOnShelf.Book.BookId">Show details</a>
+                        <a class="btn btn-light" href="@Url.Action("Show", "Books", new{id = bookOnShelf.Book.BookId})">Show details</a>
                     </div>
                 </div>
             </div>
