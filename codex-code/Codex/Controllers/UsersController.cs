@@ -29,7 +29,7 @@ namespace Codex.Controllers
         }
 
         // for displaying all the users
-        [HttpGet]
+    
         public IActionResult Index()
         {
            IEnumerable<ApplicationUser> allUsers = getAllUsers();
@@ -37,7 +37,7 @@ namespace Codex.Controllers
         }
 
         // for displaying just one of the users
-        [HttpGet("Show/{id}")]
+  
         public IActionResult Show(string id)
         {
             var user = getUserById(id); 
@@ -45,7 +45,7 @@ namespace Codex.Controllers
         }
 
         // deleting a user 
-        [HttpPost("Delete/{id}")]
+        [HttpPost]
         public IActionResult Delete(string id)
         {
             var user = getUserById(id);
@@ -57,7 +57,6 @@ namespace Codex.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpGet("Profile/{id}")]
         public IActionResult Profile(string id)
         {
             var user = getUserById(id);
@@ -66,7 +65,7 @@ namespace Codex.Controllers
         }
 
         // display the form for changing your profile 
-        [HttpGet("Edit/{id}")]
+        
         public IActionResult Edit(string id)
         {
             var user = getUserById(id);
@@ -74,7 +73,7 @@ namespace Codex.Controllers
         }
 
         // update the users profile and redirect to the profile
-        [HttpPost("Edit/{id}")]
+        [HttpPost]
         public IActionResult Edit(string id, ApplicationUser updatedUserProfile)
         {
             ApplicationUser oldUserProfile = getUserById(id);
