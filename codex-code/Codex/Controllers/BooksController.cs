@@ -1,4 +1,5 @@
-﻿using Codex.Data;
+﻿using AngleSharp.Text;
+using Codex.Data;
 using Codex.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,6 @@ using Microsoft.Identity.Client;
 
 namespace Codex.Controllers
 {
-    [Route("Books")]
     public class BooksController : Controller
     {
         private readonly ApplicationDbContext database;
@@ -27,7 +27,6 @@ namespace Codex.Controllers
         private const int booksPerPage = 9;
 
         // displaying all the books 
-        [HttpGet]
         public IActionResult Index(int? page)
         {
             //if theres no current page, we're on page 1
@@ -40,7 +39,6 @@ namespace Codex.Controllers
         }
 
         // show method for a certain book 
-        [HttpGet("Show/{id:int}")]
         public IActionResult Show(int id)
         {
             setAccessRights(); 
@@ -57,7 +55,6 @@ namespace Codex.Controllers
         }
 
         // displaying the form for adding a new book
-        [HttpGet("New")]
         public IActionResult New() {
            
             Book newBook = new Book();
@@ -67,7 +64,7 @@ namespace Codex.Controllers
         }
 
         // adding the info to the database
-        [HttpPost("New")]
+        [HttpPost]
         public IActionResult New(Book newBook)
         {
             try
@@ -111,7 +108,6 @@ namespace Codex.Controllers
         }
 
         // displayng the form for editing a book
-        [HttpGet("Edit/{id:int}")]
         public IActionResult Edit(int id)
         {
             // finding the book in the database
@@ -124,7 +120,7 @@ namespace Codex.Controllers
 
         }
 
-        [HttpPost("Edit/{id:int}")]
+        [HttpPost]
         public IActionResult Edit(int id, Book editedBook)
         {
             Book oldBook = getBookById(id);
@@ -163,7 +159,7 @@ namespace Codex.Controllers
         }
 
 
-        [HttpPost("Delete/{id:int}")]
+        [HttpPost]
         public ActionResult Delete(int id)
         {
             // find book based on id
@@ -177,6 +173,28 @@ namespace Codex.Controllers
             // saving the changes made 
             database.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult AddToShelf(int bookId, string selectedShelfValue)
+        {
+            // convert string to int 
+            int.TryParse(selectedShelfValue, out int shelfId);
+
+            var bookOnShelf = new BookOnShelf
+            {
+                BookId = bookId,
+                ShelfId = shelfId
+            }; 
+
+            database.BooksOnShelves.Add(bookOnShelf);
+            database.SaveChanges();
+
+            TempData["message"] = "The book was added to the shelf!";
+
+            return RedirectToAction("Show", "Books", new {id =  bookId});
+
+
         }
 
         // retrieving all the books from the database

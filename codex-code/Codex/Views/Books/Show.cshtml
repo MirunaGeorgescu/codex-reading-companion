@@ -58,10 +58,10 @@
                 @if (ViewBag.IsUser)
                 {
                     <h5 class="card-title">Add Book To Shelf</h5>
-                    <form method="post" action="/Book/AddToShelf">
+                    <form method="post" action="/Books/AddToShelf">
                         <input type="hidden" name="BookId" value="@Model.BookId" />
                         <div class="form-group">
-                            <select class="form-control" id="chosenShelfId" name="chosenShelfId">
+                            <select class="form-control" id="selectedShelfValue" name="selectedShelfValue">
                                 <option value="">Select Shelf</option>
                                 @foreach (var shelf in Model.ShelvesOptions)
                                 {
