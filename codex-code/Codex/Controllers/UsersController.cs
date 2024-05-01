@@ -51,6 +51,25 @@ namespace Codex.Controllers
         {
             var user = getUserById(id);
 
+            // remove reviews associated with teh user from the database 
+            var reviews = GetReviewsByUserId(id);
+            
+            if(reviews != null)
+            {
+                database.Reviews.RemoveRange(reviews); 
+                database.SaveChanges();
+            }
+            
+
+            // remove shelves associated with teh user from the database 
+            var shelves = GetShelvesByUserId(id);
+
+            if (shelves != null)
+            {
+                database.Shelves.RemoveRange(shelves);
+                database.SaveChanges();
+            }
+
             // remove user from database and save changes 
             database.Remove(user);
             database.SaveChanges();
@@ -130,6 +149,16 @@ namespace Codex.Controllers
                         .Where(review => review.UserId == userId && review.Rating == 5)
                         .Select(review => review.Book)
                         .ToList();
+        }
+
+        private IEnumerable<Review> GetReviewsByUserId(string userId)
+        {
+            return database.Reviews.Where(review => review.UserId == userId);
+        }
+
+        private IEnumerable<Shelf> GetShelvesByUserId(string userId)
+        {
+            return database.Shelves.Where(shelf => shelf.UserId == userId);
         }
 
         private void populateFavouriteBooksOptions(string userId)
