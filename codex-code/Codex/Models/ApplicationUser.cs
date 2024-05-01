@@ -26,6 +26,9 @@ namespace Codex.Models
         [NotMapped]
         public IEnumerable<SelectListItem>? FavoriteBooksOptions { get; set; }
 
+        [NotMapped]
+        public IEnumerable<SelectListItem>? ShelvesOptions { get; set; }
+
         public void UseDefaultProfilePictureUrl()
         {
             ProfilePhoto = DefaultProfilePictureUrl;
