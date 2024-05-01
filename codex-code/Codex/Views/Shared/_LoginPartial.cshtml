@@ -13,7 +13,7 @@
         <li class="nav-item">
             <div class="d-flex align-items-center">
                 <div class="p-1">
-                    <a href="Users/Profile/@user.Id" class="nav-link">
+                    <a href="@Url.Action("Profile", "Users", new{id = user.Id})" class="nav-link">
                         <img src="@user.ProfilePhoto" class="rounded-circle" style="width: auto; height: 40px; max-width: 40px; max-height: 40px;" alt="Profile Picture" />
                     </a>
                 </div>
