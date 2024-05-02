@@ -170,6 +170,15 @@ namespace Codex.Controllers
             // find book based on id
             Book book = getBookById(id);
 
+            // find the book on the shelves of people and detelte it from there
+            var bookOnShelves = database.BooksOnShelves
+                .Where(bos => bos.BookId == id); 
+            database.BooksOnShelves.RemoveRange(bookOnShelves);
+
+            // find the reviews asociated with that book and delete them form teh db 
+            var bookReviews = database.Reviews.Where(review => review.BookId == id);
+            database.Reviews.RemoveRange(bookReviews);
+
             // remove book form database
             database.Books.Remove(book);
 
@@ -218,7 +227,6 @@ namespace Codex.Controllers
         {
             List<Book> allBooks = database.Books.ToList();
             return allBooks;
-
         }
 
         // retrieving a certain book from the database knowing the id
