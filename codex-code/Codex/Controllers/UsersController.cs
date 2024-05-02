@@ -41,7 +41,9 @@ namespace Codex.Controllers
   
         public IActionResult Show(string id)
         {
-            var user = getUserById(id); 
+            var user = database.Users
+              .Include(u => u.FavoriteBooks)
+              .FirstOrDefault(u => u.Id == id);
             return View(user);
         }
 
@@ -94,13 +96,16 @@ namespace Codex.Controllers
 
         public IActionResult Profile(string id)
         {
-            var user = getUserWithShelvesById(id);
+            // find user, their shelves and their favorite books in the database 
+            var user = database.Users
+               .Include(u => u.FavoriteBooks)
+               .Include(u => u.Shelves)
+               .FirstOrDefault(u => u.Id == id);
 
             return View(user);
         }
 
         // display the form for changing your profile 
-        
         public IActionResult Edit(string id)
         {
             var user = getUserById(id);
@@ -152,13 +157,6 @@ namespace Codex.Controllers
         private ApplicationUser getUserById(string id)
         {
             return database.Users.Find(id); 
-        }
-
-        private ApplicationUser getUserWithShelvesById(string id)
-        {
-            return database.Users
-                    .Include(user => user.Shelves)
-                    .FirstOrDefault(user => user.Id == id);
         }
 
         private IEnumerable<ApplicationUser> getAllUsers()
