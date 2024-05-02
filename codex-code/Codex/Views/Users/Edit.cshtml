@@ -21,6 +21,34 @@
     </div>
 
     <br />
+    <br />
+    @*let the user select their favorite books they want to display*@
+    @if (Model.FavoriteBooksOptions != null)
+    {
+        <h4>Select Your Favorite Books</h4>
+        <div>
+            @foreach (var bookOption in Model.FavoriteBooksOptions)
+            {
+                // check to see if the book had previously been added to the favorites
+                bool wasSelected = (Model.FavoriteBooks != null)
+                    && (Model.FavoriteBooks.Any(book => book.BookId.ToString() == bookOption.Value));
+
+                if (wasSelected)
+                {
+                    <input type="checkbox" id="@bookOption.Value" value="@bookOption.Value" name="selectedFavoriteBooks" checked />
+                }
+                else
+                {
+                    <input type="checkbox" id="@bookOption.Value" value="@bookOption.Value" name="selectedFavoriteBooks" />
+                }
+
+                <label for="@bookOption.Value">@bookOption.Text</label>
+                <br />
+            }
+        </div>
+    }
+
+    <br />
     <div class="form-group d-flex justify-content-between">
         <a class="btn btn-outline-secondary" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Advanced Settings</a>
         <button type="submit" class="btn btn-outline-secondary">Save Changes</button>

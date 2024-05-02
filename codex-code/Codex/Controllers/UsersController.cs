@@ -104,6 +104,10 @@ namespace Codex.Controllers
         public IActionResult Edit(string id)
         {
             var user = getUserById(id);
+
+            // add favorite books for the user
+            populateFavouriteBooksOptions(ref user);
+
             return View(user); 
         }
 
@@ -118,6 +122,8 @@ namespace Codex.Controllers
                if(ModelState.IsValid)
                 {
                     mapUserAttributes(ref oldUserProfile, updatedUserProfile);
+
+                    updateFavoriteBooksSelection(oldUserProfile.Id, Request.Form["selectedFavoriteBooks"]); 
                     database.SaveChanges();
 
                     TempData["message"] = "Your profile was succesfuly updated";
@@ -126,12 +132,17 @@ namespace Codex.Controllers
                 }
                 else
                 {
+                    // add favorite books for the user
+                    populateFavouriteBooksOptions(ref oldUserProfile);
+
                     return View(oldUserProfile); 
                 }
                 
             }
             catch (Exception ex)
             {
+                // add favorite books for the user
+                populateFavouriteBooksOptions(ref oldUserProfile);
 
                 ModelState.AddModelError("", "An error occurred while updating your profile: " + ex.Message);
                 return View(oldUserProfile);
@@ -176,10 +187,9 @@ namespace Codex.Controllers
             return database.Shelves.Where(shelf => shelf.UserId == userId);
         }
 
-        private void populateFavouriteBooksOptions(string userId)
+        private void populateFavouriteBooksOptions(ref ApplicationUser user)
         {
-            var user = getUserById(userId); 
-            List<Book> fiveStarBooks = getFiveStarBooks(userId);
+            List<Book> fiveStarBooks = getFiveStarBooks(user.Id);
 
             user.FavoriteBooksOptions = ConvertToSelectList(fiveStarBooks); 
         }
@@ -221,6 +231,42 @@ namespace Codex.Controllers
         private List<Review> getReviewsByBookId(int bookId)
         {
             return database.Reviews.Where(review => review.BookId == bookId).ToList();
+        }
+
+        private void updateFavoriteBooksSelection(string userId, string[] selectedBooks)
+        {
+            var user = database.Users
+                .Include(u => u.FavoriteBooks)
+                .FirstOrDefault(u => u.Id == userId);
+
+            // if the user has not set any favorite books yet, initialize the list 
+            if (user.FavoriteBooks != null)
+            {
+                user.FavoriteBooks.Clear();
+            }
+            else
+            {
+                user.FavoriteBooks = new List<Book>(); 
+            }
+           
+
+            if (selectedBooks != null)
+            {
+                // find the selected favorite books and add them to the list
+                foreach (var selectedBook in selectedBooks)
+                {
+                    var bookId = int.Parse(selectedBook);
+                    var book = database.Books
+                        .FirstOrDefault(b => b.BookId == bookId); 
+
+                    if(book != null)
+                    {
+                        user.FavoriteBooks.Add(book); 
+                    }
+                }
+
+                database.SaveChanges();             
+            }
         }
     }
 }
