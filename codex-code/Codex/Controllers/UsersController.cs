@@ -56,11 +56,26 @@ namespace Codex.Controllers
             
             if(reviews != null)
             {
-                database.Reviews.RemoveRange(reviews); 
-                database.SaveChanges();
+               // if there are reviews, delete them and update the rating of the book
+               foreach(var review in reviews)
+               {
+                    var book = review.Book;
+                    var reviewsLeft = book.Reviews
+                            .Where(r => r.UserId != id)
+                            .ToList();
+
+                    // if there are reviews left then calculate the new rating
+                    if(reviewsLeft.Count> 0)
+                    {
+                       updateBookRating(-review.Rating, ref book);
+                    }
+                    else
+                    {
+                        book.Rating = null; 
+                    }
+               }
             }
             
-
             // remove shelves associated with teh user from the database 
             var shelves = GetShelvesByUserId(id);
 
@@ -184,6 +199,28 @@ namespace Codex.Controllers
         {
             destination.Name = source.Name;
             destination.ProfilePhoto = source.ProfilePhoto; 
+        }
+
+        private void updateBookRating(int rating, ref Book book)
+        {
+            // finding if there are any other reviews in order to calculate the books rating
+            int reviewsCount = getReviewsByBookId(book.BookId).Count();
+
+            // if there are ratings already, update the average rating  
+            if (reviewsCount > 0)
+            {
+                book.Rating = ((int)(((book.Rating * reviewsCount) + rating) / (reviewsCount + 1) * 10)) / (float)10;
+            }
+            else
+            {
+                book.Rating = rating;
+            }
+
+        }
+
+        private List<Review> getReviewsByBookId(int bookId)
+        {
+            return database.Reviews.Where(review => review.BookId == bookId).ToList();
         }
     }
 }
