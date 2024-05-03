@@ -29,7 +29,7 @@
                 <div class="card-footer">
                     <div class="d-flex justify-content-around">
                         <div class="p-2">
-                            <a href="#" class="btn btn-outline-secondary">Edit</a>
+                            <a href="@Url.Action("Edit", "ReadingBadges", new { id = badge.BadgeId })" class="btn btn-outline-secondary">Edit</a>
                         </div>
                         <div class="p-2">
                             <form method="post" action="ReadingBadges/Delete/@badge.BadgeId">

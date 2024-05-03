@@ -1,30 +1,30 @@
 ﻿@model Codex.Models.ReadingBadge
 
-<h2>Add a new reading badge to the Codex databse!</h2>
+<h2>Edit the @Model.Name reading badge</h2>
 
 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-<form method="post" action="/readingbadges/new">
+<form method="post" action="/readingbadges/edit/@Model.BadgeId">
     <div class="form-group">
         <label asp-for="Name">The name of the badge:</label>
-        <input asp-for="Name" type="text" class="form-control" placeholder="Enter the name of the badge" />
+        <input asp-for="Name" type="text" class="form-control" value="@Model.Name" />
         @Html.ValidationMessageFor(m => m.Name, "The badge name is required!", new { @class = "text-danger" })
     </div>
     <br />
 
     <div class="form-group">
         <label asp-for="Description">The description of the badge:</label>
-        <textarea asp-for="Description" class="form-control" placeholder="Enter the description of the badge"></textarea>
+        <textarea asp-for="Description" class="form-control" >@Model.Description</textarea>
         @Html.ValidationMessageFor(m => m.Description, "The description of the badge is required!", new { @class = "text-danger" })
     </div>
     <br />
 
     <div class="form-group">
         <label asp-for="Image">The url of the image for the badge:</label>
-        <input asp-for="Image" type="text" class="form-control" placeholder="Enter url of the image for the badge" />
+        <input asp-for="Image" type="text" class="form-control" value="@Model.Image" />
         @Html.ValidationMessageFor(m => m.Image, "The url of the image for the badge is required!", new { @class = "text-danger" })
     </div>
     <br />
 
-    <button type="submit" class="btn btn-outline-secondary">Add reading badge!</button>
-</form> 
+    <button type="submit" class="btn btn-outline-secondary">Edit reading badge!</button>
+</form>
