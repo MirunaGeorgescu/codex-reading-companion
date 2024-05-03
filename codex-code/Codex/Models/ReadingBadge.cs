@@ -11,13 +11,13 @@ namespace Codex.Models
         public int BadgeId { get; set; }
 
         [Required(ErrorMessage = "The badge name is required!")]
-        public string BadgeName { get; set; }
+        public string Name { get; set; }
 
         [Required(ErrorMessage = "The badge description is required!")]
-        public string BadgeDescription { get; set; }
+        public string Description { get; set; }
 
         [Required(ErrorMessage = "The badge image is required!")]
-        public string BadgeImage {  get; set; }
+        public string Image {  get; set; }
 
     }
 }

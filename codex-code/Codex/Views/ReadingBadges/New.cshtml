@@ -1,0 +1,39 @@
+﻿@model Codex.Models.ReadingBadge
+
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-info" role="alert">
+        @TempData["message"]
+    </div>
+}
+<br />
+
+<h2>Add a new reading badge to the Codex databse!</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+<form method="post" action="/readingbadges/new">
+    <div class="form-group">
+        <label asp-for="Name">The name of the badge:</label>
+        <input asp-for="Name" type="text" class="form-control" placeholder="Enter the name of the badge" />
+        @Html.ValidationMessageFor(m => m.Name, "The badge is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="Description">The description of the badge:</label>
+        <input asp-for="Description" type="text" class="form-control" placeholder="Enter the description of the badge" />
+        @Html.ValidationMessageFor(m => m.Description, "The description of the badge is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="Image">The url of the image for the badge:</label>
+        <input asp-for="Image" type="text" class="form-control" placeholder="Enter url of the image for the badge" />
+        @Html.ValidationMessageFor(m => m.Image, "The url of the image for the badge is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-outline-secondary">Add reading badge!</button>
+</form> 
