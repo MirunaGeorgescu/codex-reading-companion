@@ -19,6 +19,7 @@ namespace Codex.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Shelf> Shelves { get; set; }
         public DbSet<BookOnShelf> BooksOnShelves { get; set;}
+        public DbSet<ReadingBadge> ReadingBadges { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

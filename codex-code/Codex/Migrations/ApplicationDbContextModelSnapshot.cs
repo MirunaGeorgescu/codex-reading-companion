@@ -171,6 +171,31 @@ namespace Codex.Migrations
                     b.ToTable("Genres");
                 });
 
+            modelBuilder.Entity("Codex.Models.ReadingBadge", b =>
+                {
+                    b.Property<int>("BadgeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BadgeId"));
+
+                    b.Property<string>("BadgeDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BadgeImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BadgeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BadgeId");
+
+                    b.ToTable("ReadingBadges");
+                });
+
             modelBuilder.Entity("Codex.Models.Review", b =>
                 {
                     b.Property<int>("ReviewId")
