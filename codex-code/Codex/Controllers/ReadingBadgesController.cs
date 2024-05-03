@@ -23,7 +23,11 @@ namespace Codex.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            // get all the badges form the database
+            var allBadges = getAllBadges();
+
+            // send them to the view to display 
+            return View(allBadges);
         }
 
         // display form for adding a new reading badge 
@@ -32,6 +36,7 @@ namespace Codex.Controllers
             return View(); 
         }
 
+        // add the new badge to the database
         [HttpPost]
         public IActionResult New(ReadingBadge newReadingBadge) 
         {
@@ -80,6 +85,11 @@ namespace Codex.Controllers
         {
             return database.ReadingBadges
                 .FirstOrDefault(rb => rb.Name == name); 
+        }
+
+        private IEnumerable<ReadingBadge> getAllBadges()
+        {
+            return database.ReadingBadges.ToList(); 
         }
     }
 

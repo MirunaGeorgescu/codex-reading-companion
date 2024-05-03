@@ -22,7 +22,7 @@ namespace Codex.Controllers
             // getting all the genres from the database 
             var allGenres = getAllGenres();
 
-            //returning them to the view so they can be displayed
+            // returning them to the view so they can be displayed
             return View(allGenres);
         }
 
