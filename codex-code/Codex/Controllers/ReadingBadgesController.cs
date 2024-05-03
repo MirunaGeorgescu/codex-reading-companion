@@ -72,6 +72,23 @@ namespace Codex.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            // find the reading badge in the database 
+            ReadingBadge badge = getBadgeById(id); 
+
+            // removing the genre from the database
+            database.ReadingBadges.Remove(badge);
+
+            TempData["message"] = "The genre " + badge.Name + " was removed from the database!";
+
+            // saving the changes made 
+            database.SaveChanges();
+            return RedirectToAction("Index");
+
+        }
+
         private bool isBageUnique(ReadingBadge readingBadge)
         {
             // see if i can find a badge with the same name in teh database
@@ -90,6 +107,11 @@ namespace Codex.Controllers
         private IEnumerable<ReadingBadge> getAllBadges()
         {
             return database.ReadingBadges.ToList(); 
+        }
+        private ReadingBadge getBadgeById(int id)
+        {
+            return database.ReadingBadges
+                .FirstOrDefault(rb => rb.BadgeId == id); 
         }
     }
 
