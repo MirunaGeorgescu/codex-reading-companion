@@ -19,5 +19,6 @@ namespace Codex.Models
         [Required(ErrorMessage = "The badge image is required!")]
         public string Image {  get; set; }
 
+        public virtual ICollection<BadgeEarned>? BadgesEarned { get; set; }
     }
 }

@@ -20,6 +20,8 @@ namespace Codex.Data
         public DbSet<Shelf> Shelves { get; set; }
         public DbSet<BookOnShelf> BooksOnShelves { get; set;}
         public DbSet<ReadingBadge> ReadingBadges { get; set; }
+        
+        public DbSet<BadgeEarned> BadgesEarned { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,6 +44,23 @@ namespace Codex.Data
                 .HasOne(bs => bs.Shelf)
                 .WithMany(s => s.BooksOnShelves)
                 .HasForeignKey(bs => bs.ShelfId);
+
+            // USERS-BADGES
+            // primary key made up of UserId and BadgeId
+            modelBuilder.Entity<BadgeEarned>()
+                .HasKey(be => new { be.UserId, be.BadgeId });
+
+            // relationship between users and badges
+            modelBuilder.Entity<BadgeEarned>()
+                 .HasOne(be => be.User)
+                 .WithMany(u => u.BadgesEarned)
+                 .HasForeignKey(be => be.UserId);
+
+            modelBuilder.Entity<BadgeEarned>()
+                .HasOne(be => be.Badge)
+                .WithMany(b => b.BadgesEarned)
+                .HasForeignKey(be => be.BadgeId);
+
         }
 
     }
