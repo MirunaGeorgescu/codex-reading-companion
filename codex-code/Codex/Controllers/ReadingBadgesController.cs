@@ -114,6 +114,9 @@ namespace Codex.Controllers
             // find badge by id
             var readingBadge = getBadgeById(id);
 
+            // add the badge criteria type options
+            readingBadge.CriteriaTypeOptions = getCriteriaTypeOptions(); 
+
             // send the badge to the view
             return View(readingBadge);
         }
@@ -128,6 +131,17 @@ namespace Codex.Controllers
             {
                 if (ModelState.IsValid)
                 {
+
+                    // validate the badge type and input
+                    if ((newReadingBadge.CriteriaType == CriteriaType.BooksRead || newReadingBadge.CriteriaType == CriteriaType.BooksToRead)
+                        && (!string.IsNullOrEmpty(newReadingBadge.TargetName)))
+                    {
+                        ModelState.AddModelError("TargetName", "Target name should not be provided for badge types BooksRead or BooksToRead.");
+                        newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions();
+                        return View(newReadingBadge);
+                    }
+
+
                     // if the new badge is valid then we map the attributes to the old badge and save the changes 
                     mapBadgeAttributes(ref oldReadingBadge, newReadingBadge);
                     database.SaveChanges();
@@ -139,15 +153,18 @@ namespace Codex.Controllers
                 }
                 else
                 {
+                    newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions();
                     return View(newReadingBadge);
                 }
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "An error occurred while saving the reading badge: " + ex.Message);
+                newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions();
                 return View(newReadingBadge);
             }
         }
+
         private bool isBadgeUnique(ReadingBadge readingBadge)
         {
             // see if there is a badge with the same name in teh database
@@ -206,6 +223,9 @@ namespace Codex.Controllers
             destination.Name = source.Name;
             destination.Description = source.Description;
             destination.Image = source.Image;
+            destination.CriteriaType = source.CriteriaType;
+            destination.CriteriaValue = source.CriteriaValue;
+            destination.TargetName = source.TargetName; 
         }
 
         private IEnumerable<SelectListItem> getCriteriaTypeOptions()
