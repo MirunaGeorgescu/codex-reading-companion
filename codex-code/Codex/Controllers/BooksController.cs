@@ -300,7 +300,7 @@ namespace Codex.Controllers
 
         private bool isBookUnique(Book book)
         {
-            return getBookByTitle(book.Title) != null;
+            return getBookByTitle(book.Title) == null;
         }
 
         private void setAccessRights()
