@@ -26,5 +26,38 @@
     </div>
     <br />
 
+    @*drop down menu for the criteria type*@
+    <div class="form-group">
+        <label asp-for="CriteriaType">Select the badge criteria type: </label>
+        <select asp-for="CriteriaType" class="form-control">
+            <option value="">Select criteria type</option>
+            @foreach (var item in Model.CriteriaTypeOptions)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+        @Html.ValidationMessageFor(m => m.CriteriaType, "The criteria type for the badge is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="CriteriaValue">The target number of books:</label>
+        <input asp-for="CriteriaValue" type="text" class="form-control" placeholder="Enter the target number of books" />
+        @Html.ValidationMessageFor(m => m.CriteriaValue, "The target number of books is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    @*Extra info for the author/ genre count type of badges*@
+    @if (Model.CriteriaType == Codex.Enums.CriteriaType.GenreCount
+        || Model.CriteriaType == Codex.Enums.CriteriaType.AuthorCount)
+    {
+        <div class="form-group">
+            <label asp-for="TargetName">Extra info (author or genre name)</label>
+            <input asp-for="TargetName" type="text" class="form-control" placeholder="Enter extra info" />
+            @Html.ValidationMessageFor(m => m.TargetName, "", new { @class = "text-danger" })
+        </div>
+    }
+    <br />
+
     <button type="submit" class="btn btn-outline-secondary">Add reading badge!</button>
 </form> 

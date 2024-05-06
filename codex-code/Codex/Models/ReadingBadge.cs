@@ -23,20 +23,24 @@ namespace Codex.Models
 
 
         // CRITERIA FOR AWARDING THE BADGES
-        
+
         // the type of badge
-        public CriteriaType CriteriaType { get; set; }  
-       
+
+        [Required(ErrorMessage = "The badge type is required!")]
+        public CriteriaType CriteriaType { get; set; }
+
         // the target number of books
+
+        [Required(ErrorMessage = "The target number of books is required!")]
         public int CriteriaValue { get; set; }
 
         // some extra info like the name of the author or genre
-        public string TargetName { get; set; }
+        public string? TargetName { get; set; }
 
 
         // the options for the criteria type drop down menu 
         [NotMapped]
-        public IEnumerable<CriteriaType>? CriteriaTypeOptions { get; set; }
+        public IEnumerable<SelectListItem>? CriteriaTypeOptions { get; set; }
 
         public virtual ICollection<BadgeEarned>? BadgesEarned { get; set; }
     }

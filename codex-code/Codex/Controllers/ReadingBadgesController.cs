@@ -1,7 +1,9 @@
 ﻿using Codex.Data;
+using Codex.Enums;
 using Codex.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 
 namespace Codex.Controllers
@@ -33,7 +35,13 @@ namespace Codex.Controllers
         // display form for adding a new reading badge 
         public IActionResult New()
         {
-            return View();
+            // populate the options for the reading badge types 
+            var newBadgeInfo = new ReadingBadge
+            {
+                CriteriaTypeOptions = getCriteriaTypeOptions()
+            };
+
+            return View(newBadgeInfo);
         }
 
         // add the new badge to the database
@@ -46,28 +54,40 @@ namespace Codex.Controllers
                 {
                     if (isBadgeUnique(newReadingBadge))
                     {
+                        // validate the badge type and input
+                        if((newReadingBadge.CriteriaType == CriteriaType.BooksRead || newReadingBadge.CriteriaType == CriteriaType.BooksToRead)
+                            && (!string.IsNullOrEmpty(newReadingBadge.TargetName)))
+                        {
+                            ModelState.AddModelError("TargetName", "Target name should not be provided for badge types BooksRead or BooksToRead.");
+                            newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions(); 
+                            View(newReadingBadge);
+                        }
+
                         // adding the genre to the databse if its unique
                         database.Add(newReadingBadge);
                         database.SaveChanges();
 
                         TempData["message"] = "The reading badge " + newReadingBadge.Name + " was added to the database!";
 
-                        return Redirect("");
+                        return RedirectToAction("Index");
                     }
                     else
                     {
                         ModelState.AddModelError("Name", "The reading badge " + newReadingBadge.Name + " already exists in the database!");
+                        newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions();
                         return View(newReadingBadge);
                     }
                 }
                 else
                 {
+                    newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions();
                     return View(newReadingBadge);
                 }
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "An error occurred while saving the reading badge: " + ex.Message);
+                newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions();
                 return View(newReadingBadge);
             }
         }
@@ -186,6 +206,21 @@ namespace Codex.Controllers
             destination.Name = source.Name;
             destination.Description = source.Description;
             destination.Image = source.Image;
+        }
+
+        private IEnumerable<SelectListItem> getCriteriaTypeOptions()
+        {
+            // getting the criteria types defined in the enum in order to display them in a drop down menu
+            var criteriaTypeOptions = Enum.GetValues(typeof(CriteriaType))
+                                         .Cast<CriteriaType>()     
+                                         .Select(criteriaType => new SelectListItem
+                                         {
+                                             Value = criteriaType.ToString(),
+                                             Text = criteriaType.ToString()
+                                         })
+                                         .ToList();
+
+            return criteriaTypeOptions;
         }
     }
 }
