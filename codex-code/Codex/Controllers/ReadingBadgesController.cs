@@ -60,7 +60,7 @@ namespace Codex.Controllers
                         {
                             ModelState.AddModelError("TargetName", "Target name should not be provided for badge types BooksRead or BooksToRead.");
                             newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions(); 
-                            View(newReadingBadge);
+                            return View(newReadingBadge);
                         }
 
                         // adding the genre to the databse if its unique
