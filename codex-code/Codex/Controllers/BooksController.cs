@@ -218,11 +218,6 @@ namespace Codex.Controllers
 
             TempData["message"] = "The book was added to the shelf!";
 
-            // get the users id 
-            var userId = userManager.GetUserId(User);
-
-            meetsCriteria(userId); 
-
             return RedirectToAction("Show", "Books", new { id = bookId });
 
 
@@ -384,131 +379,7 @@ namespace Codex.Controllers
             book.ShelvesOptions = shelvesOptions;
         }
 
-        // criteria for awarding badges to the user
-        private bool meetsClassicConnoisseurCriteria(string userId)
-        {
-            // check to see if they read at least 5 classics
-            int clasicCount = 0;
-
-            // get the read shelf of the user
-            var readShelf = getShelfByNameForUser(userId, "Read");
-
-            if (readShelf != null)
-            {
-                // go through the books on the read shelf and check the genre
-                foreach(var bookOnShelf in readShelf.BooksOnShelves)
-                {
-                    int bookId = (int)bookOnShelf.BookId; 
-
-                    // get the book from the database in order to check the genre
-                    var book = getBookById(bookId); 
-
-                    if(book != null)
-                    {
-                        // check to see if the gere of the book is classic
-                        var genreID = book.GenreId;
-                        var genre = database.Genres.FirstOrDefault(g => g.GenreId == genreID);
-                        if (genre != null && genre.Name == "Classic") 
-                            clasicCount++;
-                    }
-
-                }
-               
-            }
-
-            return clasicCount >= 5;
-        }
-
-        private bool meetsAustenAdmirerCriteria(string userId)
-        {
-            // read 4 jane austen books
-            return true;
-        }
-
-        private bool meetsMasterOfTheMacabreCriteria(string userId)
-        {
-            // read 5 horror books 
-            return true;
-        }
-
-        private bool meetsHopelessRomanticCriteria(string userId)
-        {
-            // read 5 romance novels
-            return true;
-        }
-
-        private bool meetsDeathByTBRCriteria(string userId)
-        {
-            // has 20 books on their TBR
-            return true;
-        }
-
-        private bool meetsSerialReaderCriteria(string userId)
-        {
-            // har read 6 thrillers
-            return true;
-        }
-
-        public void meetsCriteria(string userId)
-        {
-            if (meetsClassicConnoisseurCriteria(userId))
-                awardBadge(userId, 2);
-        }
-
-        private void awardBadge(string userId, int badgeId)
-        {
-            // find the user in the database
-            var user = getUserById(userId);
-
-            // find badge the database
-            var badge = getBadgeById(badgeId);
-
-            // check to see if the user has already earned that badge before 
-            if (!hasBadge(user, badge))
-            {
-                var badgeEarned = new BadgeEarned
-                {
-                    UserId = userId,
-                    BadgeId = badgeId,
-                    DateEarned = DateTime.Now
-                };
-
-                database.BadgesEarned.Add(badgeEarned);
-                database.SaveChanges();
-            }
-
-            TempData["badgeMessage"] = "Congratulations! You earned a new badge!";
-        }
-
-        private ApplicationUser getUserById(string id)
-        {
-            return database.Users.Find(id);
-        }
-
-        private bool hasBadge(ApplicationUser user, ReadingBadge badge)
-        {
-            var readingBadge = database.BadgesEarned
-                                .FirstOrDefault(be => be.UserId == user.Id && be.BadgeId == badge.BadgeId);
-
-            return readingBadge != null;
-        }
-
-        private ReadingBadge getBadgeById(int id)
-        {
-            return database.ReadingBadges
-                .FirstOrDefault(rb => rb.BadgeId == id);
-        }
-
-        private Shelf getShelfByNameForUser(string userId, string shelfName)
-        {
-            var user = database.Users
-                        .Include(u => u.Shelves)
-                        .ThenInclude(s => s.BooksOnShelves)
-                        .FirstOrDefault(u => u.Id == userId);
-
-            return user.Shelves.FirstOrDefault(s => s.Name == shelfName);
-        }
-
+       
     }
 }
 
