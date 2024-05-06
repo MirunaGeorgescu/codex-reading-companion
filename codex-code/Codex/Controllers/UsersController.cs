@@ -78,7 +78,7 @@ namespace Codex.Controllers
                }
             }
             
-            // remove shelves associated with teh user from the database 
+            // remove shelves associated with the user from the database 
             var shelves = GetShelvesByUserId(id);
 
             if (shelves != null)
@@ -266,5 +266,7 @@ namespace Codex.Controllers
                 database.SaveChanges();             
             }
         }
+
+      
     }
 }

@@ -8,6 +8,14 @@
 }
 <br />
 
+@if (TempData.ContainsKey("badgeMessage"))
+{
+    <div class="alert alert-info" role="alert">
+        @TempData["badgeMessage"]
+    </div>
+}
+<br />
+
 <div class="row">
     @*Displaying the cover image, title and author on the left of the page*@
     <div class="col-md-4">
