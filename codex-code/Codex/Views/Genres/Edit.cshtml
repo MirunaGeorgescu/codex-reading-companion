@@ -5,6 +5,8 @@
 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
 <form method="post" action="/genres/edit/@Model.GenreId">
+    <input type="hidden" asp-for="GenreId" />
+
     <div class="form-group">
         <label asp-for="Name">Name:</label>
         <input asp-for="Name" type="text" class="form-control" value="@Model.Name" />
