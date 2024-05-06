@@ -108,7 +108,6 @@ namespace Codex.Controllers
             {
                 if (ModelState.IsValid)
                 {
-
                     // if the new badge is valid then we map the attributes to the old badge and save the changes 
                     mapBadgeAttributes(ref oldReadingBadge, newReadingBadge);
                     database.SaveChanges();
@@ -117,8 +116,6 @@ namespace Codex.Controllers
 
                     // back to the index page so we can see the changes 
                     return RedirectToAction("Index");
-
-
                 }
                 else
                 {
@@ -191,6 +188,4 @@ namespace Codex.Controllers
             destination.Image = source.Image;
         }
     }
-
-
 }
