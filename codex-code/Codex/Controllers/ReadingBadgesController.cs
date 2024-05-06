@@ -63,6 +63,36 @@ namespace Codex.Controllers
                             return View(newReadingBadge);
                         }
 
+                        // validate the genrecount badge type input 
+                        if (newReadingBadge.CriteriaType == CriteriaType.GenreCount)
+                        {
+                            var genreName = newReadingBadge.TargetName;
+                            var genreExists = database.Genres
+                                .FirstOrDefault(g => g.Name == genreName);
+
+                            if (genreExists == null)
+                            {
+                                ModelState.AddModelError("TargetName", "The genre does not exist in the database! Please enter a valid genre!");
+                                newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions();
+                                return View(newReadingBadge);
+                            }
+                        }
+
+                        // validate the authorcount badge type input 
+                        if(newReadingBadge.CriteriaType == CriteriaType.AuthorCount)
+                        {
+                            var authorName = newReadingBadge.TargetName; 
+                            var authorExists = database.Books
+                                .FirstOrDefault(b => b.Author ==  authorName);
+
+                            if(authorExists == null)
+                            {
+                                ModelState.AddModelError("TargetName", "The author does not exist in the database! Please enter a valid author name!");
+                                newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions();
+                                return View(newReadingBadge);
+                            }
+                        }
+
                         // adding the genre to the databse if its unique
                         database.Add(newReadingBadge);
                         database.SaveChanges();
@@ -141,6 +171,34 @@ namespace Codex.Controllers
                         return View(newReadingBadge);
                     }
 
+                    // validate the genrecount badge type input 
+                    if(newReadingBadge.CriteriaType == CriteriaType.GenreCount)
+                    {
+                        var genreName = newReadingBadge.TargetName; 
+                        var genreExists = database.Genres
+                            .FirstOrDefault(g => g.Name ==  genreName);
+
+                        if (genreExists == null) {
+                            ModelState.AddModelError("TargetName", "The genre does not exist! Please enter a valid genre!");
+                            newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions();
+                            return View(newReadingBadge);
+                        }
+                    }
+
+                    // validate the authorcount badge type input 
+                    if (newReadingBadge.CriteriaType == CriteriaType.AuthorCount)
+                    {
+                        var authorName = newReadingBadge.TargetName;
+                        var authorExists = database.Books
+                            .FirstOrDefault(b => b.Author == authorName);
+
+                        if (authorExists == null)
+                        {
+                            ModelState.AddModelError("TargetName", "The author does not exist in the database! Please enter a valid author name!");
+                            newReadingBadge.CriteriaTypeOptions = getCriteriaTypeOptions();
+                            return View(newReadingBadge);
+                        }
+                    }
 
                     // if the new badge is valid then we map the attributes to the old badge and save the changes 
                     mapBadgeAttributes(ref oldReadingBadge, newReadingBadge);
