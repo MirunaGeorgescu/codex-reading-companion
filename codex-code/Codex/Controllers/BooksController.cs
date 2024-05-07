@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Text;
 using Codex.Data;
 using Codex.Models;
+using Codex.Enums; 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,6 +10,8 @@ using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using System;
+using System.Diagnostics.Metrics;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace Codex.Controllers
 {
@@ -82,7 +85,7 @@ namespace Codex.Controllers
                         database.SaveChanges();
 
                         // show the book 
-                        return Redirect("/Books/Show/" + newBook.BookId);
+                        return RedirectToAction("Show", new {id = newBook.BookId});
                     }
                     else
                     {
@@ -217,6 +220,22 @@ namespace Codex.Controllers
             database.SaveChanges();
 
             TempData["message"] = "The book was added to the shelf!";
+
+
+            // check if the user can get a new badge
+            var user = getUserByShelfId(shelfId); 
+
+            if (user != null)
+            {
+                var badges = database.ReadingBadges
+                                .ToList();
+
+                foreach (var badge in badges)
+                {
+                    if (meetsBadgeCriteria(user, badge))
+                        awardBadge(user.Id, badge.BadgeId);
+                }
+            }
 
             return RedirectToAction("Show", "Books", new { id = bookId });
 
@@ -379,7 +398,195 @@ namespace Codex.Controllers
             book.ShelvesOptions = shelvesOptions;
         }
 
-       
+        private bool meetsBadgeCriteria(ApplicationUser user, ReadingBadge badge)
+        {
+            // get the criteria information 
+            var criteriaType = badge.CriteriaType;
+
+
+            switch(criteriaType)
+            {
+                case CriteriaType.BooksRead:
+                    return meetsBooksReadCriteria(user, badge); 
+
+                case CriteriaType.BooksToRead:
+                    return meetsBooksToReadCriteria(user, badge); 
+
+                case CriteriaType.GenreCount:
+                    return meetsGenreCountCriteria(user, badge);
+
+                case CriteriaType.AuthorCount:
+                    return meetsAuthorCountCriteria(user, badge);
+
+                default:
+                    return false;
+            }
+        }
+
+        private bool meetsBooksReadCriteria(ApplicationUser user, ReadingBadge badge)
+        {
+            // check if the user has read the number of books 
+
+            int numberOfBooks = badge.CriteriaValue;
+
+            // get the users read shelf
+            var readShelf = getShelfByNameForUser(user.Id, "Read");
+
+            // count the books on the read shelf
+            var booksRead = readShelf.BooksOnShelves
+                                .Where(bos => bos.ShelfId == readShelf.ShelfId)
+                                .Count();
+
+            // check if the criteria is met 
+            return booksRead >= numberOfBooks;
+        }
+
+        private bool meetsBooksToReadCriteria(ApplicationUser user, ReadingBadge badge)
+        {
+            // check if the user has a certain number of books on their tbr 
+
+            int numberOfBooks = badge.CriteriaValue;
+
+            // get the users read shelf
+            var TBRShelf = getShelfByNameForUser(user.Id, "Want to read");
+
+            // count the books on the tbr shelf 
+            var TBRBooks = TBRShelf.BooksOnShelves
+                            .Where(bos => bos.ShelfId == TBRShelf.ShelfId)
+                            .Count();
+
+            return TBRBooks >= numberOfBooks;
+
+        }
+
+        private bool meetsGenreCountCriteria(ApplicationUser user, ReadingBadge badge)
+        {
+            // user has read a certain amount of books in that genre
+
+            int numberOfBooks = badge.CriteriaValue;
+            string genreName = badge.TargetName;
+
+            int genreCount = 0;
+
+            // get the read shelf of the user
+            var readShelf = getShelfByNameForUser(user.Id, "Read");
+
+            if (readShelf != null)
+            {
+                // go through the books on the read shelf and check the genre
+                foreach (var bookOnShelf in readShelf.BooksOnShelves)
+                {
+                    int bookId = (int)bookOnShelf.BookId;
+
+                    // get the book from the database in order to check the genre
+                    var book = getBookById(bookId);
+
+                    if (book != null)
+                    {
+                        // check to see if the genre of the book is classic
+                        var genreID = book.GenreId;
+                        var genre = database.Genres.FirstOrDefault(g => g.GenreId == genreID);
+                        if (genre != null && genre.Name == genreName)
+                            genreCount++;
+                    }
+                }
+
+            }
+
+            return genreCount >= numberOfBooks;
+
+        }
+
+        private bool meetsAuthorCountCriteria(ApplicationUser user, ReadingBadge badge)
+        {
+            // user has read a certain amount of books by the author 
+            int numberOfBooks = badge.CriteriaValue;
+            string authorName = badge.TargetName;
+
+            int authorCount = 0;
+
+            // get the read shelf of the user
+            var readShelf = getShelfByNameForUser(user.Id, "Read");
+
+            if (readShelf != null)
+            {
+                // go through the books on the read shelf and check the author
+                foreach (var bookOnShelf in readShelf.BooksOnShelves)
+                {
+                    var bookId = (int)bookOnShelf.BookId;
+                    var book = getBookById(bookId); 
+
+                    if(book != null && book.Author == authorName)
+                        authorCount++;
+                }
+            }
+
+            return authorCount >= numberOfBooks;
+        }
+
+        private void awardBadge(string userId, int badgeId)
+        {
+            // find the user in the database
+            var user = getUserById(userId);
+
+            // find badge the database
+            var badge = getBadgeById(badgeId);
+
+            // check to see if the user has already earned that badge before 
+            if (!hasBadge(user, badge))
+            {
+                var badgeEarned = new BadgeEarned
+                {
+                    UserId = userId,
+                    BadgeId = badgeId,
+                    DateEarned = DateTime.Now
+                };
+
+                database.BadgesEarned.Add(badgeEarned);
+                database.SaveChanges();
+            }
+
+            TempData["badgeMessage"] = "Congratulations! You earned a new badge!";
+        }
+
+        private ApplicationUser getUserById(string id)
+        {
+            return database.Users.Find(id);
+        }
+
+        private bool hasBadge(ApplicationUser user, ReadingBadge badge)
+        {
+            var readingBadge = database.BadgesEarned
+                                .FirstOrDefault(be => be.UserId == user.Id && be.BadgeId == badge.BadgeId);
+
+            return readingBadge != null;
+        }
+
+        private ReadingBadge getBadgeById(int id)
+        {
+            return database.ReadingBadges
+                .FirstOrDefault(rb => rb.BadgeId == id);
+        }
+
+        private Shelf getShelfByNameForUser(string userId, string shelfName)
+        {
+            var user = database.Users
+                        .Include(u => u.Shelves)
+                        .ThenInclude(s => s.BooksOnShelves)
+                        .FirstOrDefault(u => u.Id == userId);
+
+            return user.Shelves.FirstOrDefault(s => s.Name == shelfName);
+        }
+
+        private ApplicationUser getUserByShelfId (int shelfId)
+        {
+          var shelf = database.Shelves
+                .Where(s => s.ShelfId == shelfId)
+                .Include(s => s.User)
+                .FirstOrDefault();
+
+            return shelf.User; 
+        }
     }
 }
 
