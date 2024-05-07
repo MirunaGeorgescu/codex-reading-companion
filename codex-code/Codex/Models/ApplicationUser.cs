@@ -16,6 +16,8 @@ namespace Codex.Models
         public virtual ICollection<Book>? FavoriteBooks { get; set; }
         public virtual ICollection<BadgeEarned>? BadgesEarned { get; set; }
         public virtual ICollection<Shelf>? Shelves{ get; set; }
+        public virtual ICollection<ReadingBadge>? Badges {  get; set; }
+
 
         [NotMapped]
         public IEnumerable<SelectListItem>? AllRoles { get; set; }

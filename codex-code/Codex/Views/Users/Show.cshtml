@@ -66,6 +66,30 @@
                         </div>
                     </div>
                 }
+
+                <br />
+
+                @*if the user has badges then we display them*@
+                @if (Model.BadgesEarned != null)
+                {
+                    <h5>@Model.Name's Badges</h5>
+
+                    <div class=" row">
+                        @foreach (var badge in Model.Badges)
+                        {
+                            @*3 per row*@
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <img src="@badge.Image" class="card-img-top" alt="@badge.Name image" />
+
+                                    <div class="card-body">
+                                        <h6 class="card-title">@badge.Name</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@ using Codex.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Codex.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240507163144_AddBadgesToUser")]
+    partial class AddBadgesToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,10 +104,15 @@ namespace Codex.Migrations
                     b.Property<int?>("BadgeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime?>("DateEarned")
                         .HasColumnType("datetime2");
 
                     b.HasKey("UserId", "BadgeId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("BadgeId");
 
@@ -197,9 +205,6 @@ namespace Codex.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BadgeId"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("CriteriaType")
                         .HasColumnType("int");
 
@@ -222,8 +227,6 @@ namespace Codex.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BadgeId");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("ReadingBadges");
                 });
@@ -421,6 +424,10 @@ namespace Codex.Migrations
 
             modelBuilder.Entity("Codex.Models.BadgeEarned", b =>
                 {
+                    b.HasOne("Codex.Models.ApplicationUser", null)
+                        .WithMany("Badges")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Codex.Models.ReadingBadge", "Badge")
                         .WithMany("BadgesEarned")
                         .HasForeignKey("BadgeId")
@@ -470,13 +477,6 @@ namespace Codex.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("Shelf");
-                });
-
-            modelBuilder.Entity("Codex.Models.ReadingBadge", b =>
-                {
-                    b.HasOne("Codex.Models.ApplicationUser", null)
-                        .WithMany("Badges")
-                        .HasForeignKey("ApplicationUserId");
                 });
 
             modelBuilder.Entity("Codex.Models.Review", b =>

@@ -43,7 +43,10 @@ namespace Codex.Controllers
         {
             var user = database.Users
               .Include(u => u.FavoriteBooks)
+               .Include(u => u.BadgesEarned)
               .FirstOrDefault(u => u.Id == id);
+
+            populateBadges(ref user);
             return View(user);
         }
 
@@ -100,8 +103,10 @@ namespace Codex.Controllers
             var user = database.Users
                .Include(u => u.FavoriteBooks)
                .Include(u => u.Shelves)
+               .Include(u => u.BadgesEarned)
                .FirstOrDefault(u => u.Id == id);
 
+            populateBadges(ref user);
             return View(user);
         }
 
@@ -267,6 +272,22 @@ namespace Codex.Controllers
             }
         }
 
+        private void populateBadges( ref ApplicationUser user)
+        {
+            var badges = new List<ReadingBadge>();
+
+            foreach(var badgeEarned in user.BadgesEarned)
+            {
+                int badgeId =(int) badgeEarned.BadgeId; 
+
+                var badge = database.ReadingBadges
+                                .FirstOrDefault(rb => rb.BadgeId == badgeId);
+
+                badges.Add(badge);
+            }
+
+            user.Badges = badges;
+        }
       
     }
 }
