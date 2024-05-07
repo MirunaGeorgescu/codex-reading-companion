@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Codex.Models.Book>
+
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-info" role="alert">
+        @TempData["message"]
+    </div>
+}
+<br />
+
+    <div class="row">
+        @foreach (var book in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="@book.CoverImage"  class ="cardcard-img-top" alt="@book.Title Cover Image" style="max-width: 100%; height: 600px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h4 class="card-title">@book.Title</h4>
+                        <h5 class="card-subtitle mb-2 text-muted">by @book.Author</h5>
+                        <p class="card-text">Rating: @book.Rating</p>
+                        <a class="btn btn-light" href ="Books/Show/@book.BookId">Show details</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+
+
+    @if(ViewBag.TotalPages > 1)
+    {
+        <nav aria-label="Books index page">
+            <ul class="pagination">
+                @if(ViewBag.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/books?page=@(ViewBag.CurrentPage-1)" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </span>
+                    </li>
+                }
+
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    @if(i == ViewBag.CurrentPage)
+                    {
+                        <li class="page-item active">
+                            <a class="page-link">@i<span class="sr-only"></span></a>
+                        </li>
+                    }
+                    else{
+                        <li class="page-item">
+                            <a class="page-link" href="/books?page=@i">@i</a>
+                        </li>
+
+                    }
+                }
+
+                @if(ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/books?page=@(ViewBag.CurrentPage+1)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </span>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }

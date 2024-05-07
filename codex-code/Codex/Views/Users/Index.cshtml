@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Codex.Models.ApplicationUser>
+
+<div class="row">
+    @foreach (var user in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+               @if(user.ProfilePhoto != null)
+                {
+                    <img src="@user.ProfilePhoto" class="card-img-top" style="width: 100%; height: 200px; object-fit: cover;" alt="Profile Picture">
+                }
+
+                <div class="card-body">
+                    <h5 class="card-title">@user.Name</h5>
+                    <p class="card-text">Email: @user.Email</p>
+                    <a href="@Url.Action("Show", "Users", new { id = user.Id })" class="btn btn-outline-secondary">View Profile</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

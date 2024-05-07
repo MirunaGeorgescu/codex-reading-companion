@@ -1,0 +1,150 @@
+﻿@model Codex.Models.Book
+
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-info" role="alert">
+        @TempData["message"]
+    </div>
+}
+<br />
+
+@if (TempData.ContainsKey("badgeMessage"))
+{
+    <div class="alert alert-info" role="alert">
+        @TempData["badgeMessage"]
+    </div>
+}
+<br />
+
+<div class="row">
+    @*Displaying the cover image, title and author on the left of the page*@
+    <div class="col-md-4">
+        <div class="card" style="width: 100%; position: sticky; top: 0;">
+            <img src="@Model.CoverImage" alt="@Model.Title Cover Image" style="max-width: 100%; height: auto;" />
+            <div class="card-body">
+                <h4 class="card-title">@Model.Title</h4>
+                <h5 class="card-subtitle mb-2 text-muted">by @Model.Author</h5>
+            </div>
+        </div>
+    </div>
+
+    @*Displaying the rest of the book details on the right*@
+    <div class="col-md-8" style="overflow-y: auto; max-height: 80vh; padding-left: 20px;">
+        <div class="card" style="width: 100%;">
+            <div class="card-body">
+                <h5 class="card-title">Rating @Model.Rating</h5>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Genre</h5>
+                <p class=" card-text"> @Model.Genre.Name</p>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Synopsis</h5>
+                <p class="card-text">@Model.Synopsis</p>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Publication Date</h5>
+                <p class="card-text">@Model.PublicationDate</p>
+            </div>
+
+            <div class="card-footer">
+
+                
+                    @if (ViewBag.IsEditor || ViewBag.IsAdmin)
+                    {
+                        <div class="row">
+                            <div class="col">
+                                <a href="/Books/Edit/@Model.BookId" class="btn btn-outline-secondary">Edit</a>
+                                <form method="post" action="/Books/Delete/@Model.BookId" style="display: inline;">
+                                    <button class="btn btn-outline-danger" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                
+
+                @if (ViewBag.IsUser)
+                {
+                    <h5 class="card-title">Add Book To Shelf</h5>
+                    <form method="post" action="/Books/AddToShelf">
+                        <input type="hidden" name="BookId" value="@Model.BookId" />
+                        <div class="form-group">
+                            <select class="form-control" id="selectedShelfValue" name="selectedShelfValue">
+                                <option value="">Select Shelf</option>
+                                @foreach (var shelf in Model.ShelvesOptions)
+                                {
+                                    // if the book has been placed on a shelf before show it as selected
+                                    @if(shelf.Selected)
+                                    {
+                                        <option value="@shelf.Value" selected>@shelf.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@shelf.Value">@shelf.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-outline-secondary">Add to shelf!</button>
+                    </form>
+                }
+
+            </div>
+            </br>
+
+            @*Displaying reviews*@
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col"><h3>Reviews</h3></div>
+                        <div class="col text-right">
+                            <a href="/Reviews/New?bookId=@Model.BookId" class="btn btn-outline-secondary"><i class="bi bi-plus-circle"></i> Add Review</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.Reviews != null)
+                    {
+                        // if there are reviews
+                        @foreach (var review in Model.Reviews)
+                        {
+                            // displaying those reviews in a card
+                            <div class="card mb-3">
+                                @*when clicked, the link redirects to the users profile*@
+                                <div class="card-header">
+                                    <a href="/Users/Show/@review.UserId" class="text-decoration-none" style="color:inherit; text-decoration: none;">
+                                        <img src="@review.User.ProfilePhoto" class="rounded-circle" style="width: 30px; height: 30px;" alt="Profile Picture" />
+                                        @review.User.Name
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Rating: @review.Rating/5</h5>
+                                    <p class="card-text">@review.Comment</p>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    Review Date: @review.Date
+
+
+                                    @*buttons for editing and deleting a review*@
+                                    <div class="float-right">
+                                        <a href="/Reviews/Edit/@review.ReviewId" class="btn btn-outline-secondary btn-sm">Edit</a>
+                                        <form method="post" action="/Reviews/Delete/@review.ReviewId" style="display: inline;">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        // if there are no reviews then a message is displayed
+                        <div class="card-text">
+                            There are no reviews for this book yet.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+﻿@model Codex.Models.Genre
+
+<h2>Add a new genre to the Codex databse!</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form method="post" action="/genres/new">
+    <div class="form-group">
+        <label asp-for="Name">Name:</label>
+        <input asp-for="Name" type="text" class="form-control" placeholder="Enter the name of the genre" />
+        @Html.ValidationMessageFor(m => m.Name, "Name is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-outline-secondary">Add genre!</button>
+</form> 

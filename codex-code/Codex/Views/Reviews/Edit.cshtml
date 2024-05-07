@@ -1,0 +1,46 @@
+﻿@model Codex.Models.Review
+
+@{
+    ViewData["Title"] = "Edit Review";
+}
+
+<div class="card" style="width: 100%">
+    <div class="card card-header">
+        <h4>Edit your review</h4>
+    </div>
+
+    <div class="card-body">
+        @using (Html.BeginForm("Edit", "Reviews", FormMethod.Post))
+        {
+            @*sending the ids back to the controller*@
+            @Html.HiddenFor(model => model.BookId)
+            @Html.HiddenFor(model => model.ReviewId)
+
+            @*drop-down for the rating*@
+            <div class="form-group">
+                @Html.LabelFor(model => model.Rating)
+                @Html.DropDownListFor(model => model.Rating,
+                         new SelectList(new[]
+                         {
+            new SelectListItem { Text = "★", Value = "1" },
+            new SelectListItem { Text = "★★", Value = "2" },
+            new SelectListItem { Text = "★★★", Value = "3" },
+            new SelectListItem { Text = "★★★★", Value = "4" },
+            new SelectListItem { Text = "★★★★★", Value = "5" },
+            }, "Value", "Text"),
+                         "Select Rating",
+                         new { @class = "form-control", required = "required", value = Model.Rating.ToString() })
+                @Html.ValidationMessageFor(model => model.Rating, null, new { @class = "text-danger" })
+            </div>
+            <br />
+
+            @*textarea for the comment*@
+            <div class="form-group">
+                @Html.LabelFor(model => model.Comment)
+                @Html.TextAreaFor(model => model.Comment, new { @class = "form-control", value = Model.Comment })
+                @Html.ValidationMessageFor(model => model.Comment, null, new { @class = "text-danger" })
+            </div>
+            <br />
+            <button type="submit" class="btn btn-outline-secondary">Add your review!</button>
+        }
+    </div>

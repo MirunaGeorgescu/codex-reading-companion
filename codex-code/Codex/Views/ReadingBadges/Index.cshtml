@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Codex.Models.ReadingBadge>
+
+<h2>All the reading badges in the Codex database </h2>
+<br />
+
+@*displaying any alerts*@
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-info" role="alert">
+        @TempData["message"]
+    </div>
+}
+<br />
+
+<div class ="row">
+    @*display three badges per row in cards*@
+    @foreach(var badge in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="@badge.Image" class="card-img-top" alt="Badge image" />
+                
+                <div class="card-body">
+                    <h5 class="card-title">@badge.Name</h5>
+                    <p class="card-text">@badge.Description</p> 
+                </div>
+
+                @*edit and delete buttons on the same row*@
+                <div class="card-footer">
+                    <div class="d-flex justify-content-around">
+                        <div class="p-2">
+                            <a href="@Url.Action("Edit", "ReadingBadges", new { id = badge.BadgeId })" class="btn btn-outline-secondary">Edit</a>
+                        </div>
+                        <div class="p-2">
+                            <form method="post" action="ReadingBadges/Delete/@badge.BadgeId">
+                                <button class="btn btn-outline-danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,56 @@
+﻿@model Codex.Models.Book
+
+<h2>Edit @Model.Title</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form method="post" action="/books/edit">
+    <input type="hidden" asp-for="BookId" />
+
+    <div class="form-group">
+        <label asp-for="Title">Title:</label>
+        <input asp-for="Title" type="text" class="form-control" value="@Model.Title" />
+        @Html.ValidationMessageFor(m => m.Title, null, new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="Author">Author:</label>
+        <input asp-for="Author" type="text" class="form-control" value="@Model.Author" />
+        @Html.ValidationMessageFor(m => m.Author, null, new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="Genre">Genre:</label>
+        <label>Genre:</label>
+        @Html.DropDownListFor(m => m.GenreId, new SelectList(Model.GenreOptions, "Value", "Text"),
+               "Select genre" , new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Genre, null, new { @class = "text-danger" })
+        <br />
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="Synopsis">Synopsis:</label>
+        <textarea asp-for="Synopsis" class="form-control" rows="3" value="@Model.Genre"></textarea>
+        @Html.ValidationMessageFor(m => m.Synopsis, null, new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="PublicationDate">Publication Date:</label>
+        <input asp-for="PublicationDate" type="date" class="form-control" value="@Model.PublicationDate"/>
+        @Html.ValidationMessageFor(m => m.PublicationDate, null, new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="CoverImage">Cover Image:</label>
+        <input asp-for="CoverImage" type="text" class="form-control" value="@Model.CoverImage" />
+        @Html.ValidationMessageFor(m => m.CoverImage, null, new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-light">Edit book!</button>
+</form>

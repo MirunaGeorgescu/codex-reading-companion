@@ -1,0 +1,58 @@
+﻿@model Codex.Models.ReadingBadge
+
+<h2>Add a new reading badge to the Codex databse!</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form method="post" action="/readingbadges/new">
+    <div class="form-group">
+        <label asp-for="Name">The name of the badge:</label>
+        <input asp-for="Name" type="text" class="form-control" placeholder="Enter the name of the badge" />
+        @Html.ValidationMessageFor(m => m.Name, "The badge name is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="Description">The description of the badge:</label>
+        <textarea asp-for="Description" class="form-control" placeholder="Enter the description of the badge"></textarea>
+        @Html.ValidationMessageFor(m => m.Description, "The description of the badge is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="Image">The url of the image for the badge:</label>
+        <input asp-for="Image" type="text" class="form-control" placeholder="Enter url of the image for the badge" />
+        @Html.ValidationMessageFor(m => m.Image, "The url of the image for the badge is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    @*drop down menu for the criteria type*@
+    <div class="form-group">
+        <label asp-for="CriteriaType">Select the badge criteria type: </label>
+        <select asp-for="CriteriaType" class="form-control">
+            <option value="">Select criteria type</option>
+            @foreach (var item in Model.CriteriaTypeOptions)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+        @Html.ValidationMessageFor(m => m.CriteriaType, "The criteria type for the badge is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="CriteriaValue">The target number of books:</label>
+        <input asp-for="CriteriaValue" type="text" class="form-control" placeholder="Enter the target number of books" />
+        @Html.ValidationMessageFor(m => m.CriteriaValue, "The target number of books is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label asp-for="TargetName">Extra info (author or genre name)</label>
+        <input asp-for="TargetName" type="text" class="form-control" placeholder="Enter extra info" />
+        @Html.ValidationMessageFor(m => m.TargetName, "", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-outline-secondary">Add reading badge!</button>
+</form> 

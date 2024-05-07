@@ -1,0 +1,78 @@
+﻿@model Codex.Models.Review
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card" style="width: 100%; position: sticky; top: 0;">
+            <img src="@Model.Book.CoverImage" alt="@Model.Book.Title Cover Image" style="max-width: 100%; height: auto;" />
+            <div class="card-body">
+                <h4 class="card-title">@Model.Book.Title</h4>
+                <h5 class="card-subtitle mb-2 text-muted">by @Model.Book.Author</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8" style="overflow-y: auto; max-height: 80vh; padding-left: 20px;">
+        
+        <div>
+            @*Information about the book*@
+             <div class="card" style="width: 100%">
+                <div class="card-body">
+                    <h5 class="card-title">Rating @Model.Book.Rating</h5>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Genre</h5>
+                    <p class=" card-text"> @Model.Book.Genre.Name</p>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Synopsis</h5>
+                    <p class="card-text">@Model.Book.Synopsis</p>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Publication Date</h5>
+                    <p class="card-text">@Model.Book.PublicationDate</p>
+                </div>
+             </div>
+            </br>
+
+            <div class="card" style="width: 100%">
+                <div class="card card-header">
+                    <h4>What did you think of "@Model.Book.Title"?</h4>
+                </div>
+
+                <div class="card-body">
+                    @using(Html.BeginForm("New", "Reviews", FormMethod.Post))
+                    {
+                        @Html.HiddenFor(model => model.BookId)
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Rating)
+                            @Html.DropDownListFor(model => model.Rating,
+                                     new SelectList(new[]
+                                     {
+                                        new SelectListItem { Text = "★", Value = "1" },
+                                        new SelectListItem { Text = "★★", Value = "2" },
+                                        new SelectListItem { Text = "★★★", Value = "3" },
+                                        new SelectListItem { Text = "★★★★", Value = "4" },
+                                        new SelectListItem { Text = "★★★★★", Value = "5" },
+                            }, "Value", "Text"),
+                                     "Select Rating",
+                                     new { @class = "form-control", required = "required" })
+                            @Html.ValidationMessageFor(model => model.Rating, null, new { @class = "text-danger" })
+                        </div>
+                        <br/>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Comment)
+                            @Html.TextAreaFor(model => model.Comment, new { @class = "form-control", placeholder = "Enter your review"})
+                            @Html.ValidationMessageFor(model => model.Comment, null, new { @class = "text-danger" })
+                        </div>
+                        <br/>
+                        <button type="submit" class="btn btn-outline-secondary">Add your review!</button>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
