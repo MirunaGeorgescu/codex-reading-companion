@@ -21,7 +21,7 @@ namespace Codex.Data
         public DbSet<BookOnShelf> BooksOnShelves { get; set;}
         public DbSet<ReadingBadge> ReadingBadges { get; set; }
         public DbSet<BadgeEarned> BadgesEarned { get; set; }
-        public DbSet<ReadingChallenge> readingChallenges { get; set; }
+        public DbSet<ReadingChallenge> ReadingChallenges { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
