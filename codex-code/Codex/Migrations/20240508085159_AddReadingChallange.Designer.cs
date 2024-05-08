@@ -4,6 +4,7 @@ using Codex.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Codex.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240508085159_AddReadingChallange")]
+    partial class AddReadingChallange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,7 +143,7 @@ namespace Codex.Migrations
                     b.Property<float?>("Rating")
                         .HasColumnType("real");
 
-                    b.Property<int?>("ReadingChallengeId")
+                    b.Property<int?>("ReadingChallangeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Synopsis")
@@ -157,7 +160,7 @@ namespace Codex.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.HasIndex("ReadingChallengeId");
+                    b.HasIndex("ReadingChallangeId");
 
                     b.ToTable("Books");
                 });
@@ -233,13 +236,13 @@ namespace Codex.Migrations
                     b.ToTable("ReadingBadges");
                 });
 
-            modelBuilder.Entity("Codex.Models.ReadingChallenge", b =>
+            modelBuilder.Entity("Codex.Models.ReadingChallange", b =>
                 {
-                    b.Property<int>("ReadingChallengeId")
+                    b.Property<int>("ReadingChallangeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReadingChallengeId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReadingChallangeId"));
 
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
@@ -254,11 +257,11 @@ namespace Codex.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ReadingChallengeId");
+                    b.HasKey("ReadingChallangeId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("readingChallenges");
+                    b.ToTable("readingChallanges");
                 });
 
             modelBuilder.Entity("Codex.Models.Review", b =>
@@ -483,9 +486,9 @@ namespace Codex.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Codex.Models.ReadingChallenge", null)
+                    b.HasOne("Codex.Models.ReadingChallange", null)
                         .WithMany("BooksRead")
-                        .HasForeignKey("ReadingChallengeId");
+                        .HasForeignKey("ReadingChallangeId");
 
                     b.Navigation("Genre");
                 });
@@ -516,7 +519,7 @@ namespace Codex.Migrations
                         .HasForeignKey("ApplicationUserId");
                 });
 
-            modelBuilder.Entity("Codex.Models.ReadingChallenge", b =>
+            modelBuilder.Entity("Codex.Models.ReadingChallange", b =>
                 {
                     b.HasOne("Codex.Models.ApplicationUser", "User")
                         .WithMany()
@@ -627,7 +630,7 @@ namespace Codex.Migrations
                     b.Navigation("BadgesEarned");
                 });
 
-            modelBuilder.Entity("Codex.Models.ReadingChallenge", b =>
+            modelBuilder.Entity("Codex.Models.ReadingChallange", b =>
                 {
                     b.Navigation("BooksRead");
                 });

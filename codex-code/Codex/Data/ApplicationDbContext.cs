@@ -20,8 +20,8 @@ namespace Codex.Data
         public DbSet<Shelf> Shelves { get; set; }
         public DbSet<BookOnShelf> BooksOnShelves { get; set;}
         public DbSet<ReadingBadge> ReadingBadges { get; set; }
-        
         public DbSet<BadgeEarned> BadgesEarned { get; set; }
+        public DbSet<ReadingChallenge> readingChallenges { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
