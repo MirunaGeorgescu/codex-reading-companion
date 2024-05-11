@@ -22,7 +22,21 @@
                 }
                 else
                 {
-                    <p>Reading challenge view coming soon!</p>
+                    @if (ViewBag.ChallengeProgress != null)
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">@ViewBag.Year Reading Challange</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: @(ViewBag.ChallengeProgress)%;" aria-valuenow="@ViewBag.ChallengeProgress" aria-valuemin="0" aria-valuemax="100">
+                                        @(ViewBag.ChallengeProgress)% Complete
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 }
             </div>
         </div>

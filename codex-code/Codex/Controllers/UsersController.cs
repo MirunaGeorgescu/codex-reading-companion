@@ -108,6 +108,16 @@ namespace Codex.Controllers
                .FirstOrDefault(u => u.Id == id);
 
             populateBadges(ref user);
+
+            // calculate the progress in the reading challenge 
+            var challengeProgress = readingChallengeProgress(user);
+
+            if(challengeProgress != null)
+            {
+                ViewBag.ChallengeProgress = challengeProgress;
+                ViewBag.Year = DateTime.Now.Year;
+            }
+
             return View(user);
         }
 
@@ -290,5 +300,31 @@ namespace Codex.Controllers
             user.Badges = badges;
         }
       
+        private double? readingChallengeProgress(ApplicationUser user)
+        {
+          if(user.HasJoinedChallenge(new ReadingChallenge { StartDate = new DateOnly(DateTime.Now.Year, 1, 1), UserId = user.Id }))
+          {
+                // find the reading challenge 
+                var readingChallenge = database.ReadingChallenges
+                                            .FirstOrDefault(rc => rc.UserId == user.Id
+                                                                && rc.StartDate.Year == DateTime.Now.Year);
+
+                // find how many books the user wants to read 
+                var targetBooks = readingChallenge.TargetNumber;
+
+                // find how many books the user has read
+                var booksRead = 0; 
+                if (readingChallenge.BooksRead != null)
+                {
+                    booksRead = readingChallenge.BooksRead.Count;
+                }
+
+                // calculate progress procentage
+                return (double)booksRead / targetBooks * 100;
+            }
+
+            // if the user hasn't joined the reading challenge then return null
+            return null; 
+        }
     }
 }
