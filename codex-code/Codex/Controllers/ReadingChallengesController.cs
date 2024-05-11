@@ -1,4 +1,5 @@
 ﻿using Codex.Data;
+using Codex.Migrations;
 using Codex.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -99,6 +100,40 @@ namespace Codex.Controllers
                 ModelState.AddModelError("", "An error occurred while saving the reading challenge: " + ex.Message);
                 
                 return View(newReadingChallenge);
+            }
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var readingChallenge = getReadingChallengeById(id);
+            return View(readingChallenge); 
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, ReadingChallenge updatedReadingChallenge)
+        {
+            ReadingChallenge existingReadingChallenge = getReadingChallengeById(id);
+
+            try
+            {
+                if(ModelState.IsValid)
+                {
+                    existingReadingChallenge.TargetNumber = updatedReadingChallenge.TargetNumber;
+                    database.SaveChanges();
+                    return RedirectToAction("Show", "ReadingChallenges", new { id = id});
+
+                }
+                else
+                {
+                    return View(updatedReadingChallenge);
+                }
+
+            }
+            catch(Exception ex)
+            {
+                ModelState.AddModelError("", "An error occurred while saving the reading challenge: " + ex.Message);
+
+                return View(updatedReadingChallenge);
             }
         }
 

@@ -94,6 +94,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVhZGluZ0JhZGdlc1xOZXcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/ReadingChallenges/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVhZGluZ0NoYWxsZW5nZXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/ReadingChallenges/New.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVhZGluZ0NoYWxsZW5nZXNcTmV3LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
