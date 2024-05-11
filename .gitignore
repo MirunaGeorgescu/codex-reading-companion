@@ -1,3 +1,6 @@
 .vs/
 codex-code/.vs
 codex-code/codex-api/.vs
+
+codex-code/Codex/bin/Debug/net8.0/Codex.dll
+codex-code/Codex/bin/Debug/net8.0/Codex.exe
