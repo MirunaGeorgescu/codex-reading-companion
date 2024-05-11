@@ -309,8 +309,10 @@ namespace Codex.Controllers
                                             .FirstOrDefault(rc => rc.UserId == user.Id
                                                                 && rc.StartDate.Year == DateTime.Now.Year);
 
-                // find how many books the user wants to read 
-                var targetBooks = readingChallenge.TargetNumber;
+                ViewBag.ChallangeId = readingChallenge.ReadingChallengeId; 
+
+                 // find how many books the user wants to read 
+                 var targetBooks = readingChallenge.TargetNumber;
 
                 // find how many books the user has read
                 var booksRead = 0; 

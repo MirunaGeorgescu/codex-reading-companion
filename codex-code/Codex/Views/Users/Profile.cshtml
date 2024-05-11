@@ -26,7 +26,9 @@
                     {
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title">@ViewBag.Year Reading Challange</h5>
+                                <a href="@Url.Action("Show", "ReadingChallenges", new { id = ViewBag.ChallangeId })" style="text-decoration: none; color: inherit;">
+                                    <h5 class="card-title">@ViewBag.Year Reading Challange Reading Challenge</h5>
+                                </a>
                             </div>
                             <div class="card-body">
                                 <div class="progress">

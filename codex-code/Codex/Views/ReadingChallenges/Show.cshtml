@@ -1,0 +1,42 @@
+﻿@model Codex.Models.ReadingChallenge
+
+<h2> @Model.User.Name's @Model.StartDate.Year Reading Challange </h2>
+
+@if (ViewBag.ChallengeProgress != null)
+{
+    <div class="card-body">
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: @(ViewBag.ChallengeProgress)%;" aria-valuenow="@ViewBag.ChallengeProgress" aria-valuemin="0" aria-valuemax="100">
+                @(ViewBag.ChallengeProgress)% Complete
+            </div>
+        </div>
+    </div>
+}
+
+<br /> 
+
+@if (Model.BooksRead.Any())
+{
+
+    <div class="row">
+        @*display the books in cards, three on a row*@
+        @foreach (var book in Model.BooksRead)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="@book.CoverImage" class="cardcard-img-top" alt="@book.Title Cover Image" style="max-width: 100%; height: 600px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h4 class="card-title">@book.Title</h4>
+                        <h5 class="card-subtitle mb-2 text-muted">by @book.Author</h5>
+                        <p class="card-text">Rating: @book.Rating</p>
+                        <a class="btn btn-light" href="@Url.Action("Show", "Books", new{id = book.BookId})">Show details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p> Yoou haven't read any books yet! </p>
+}

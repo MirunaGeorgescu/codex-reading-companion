@@ -3,6 +3,7 @@ using Codex.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace Codex.Controllers
@@ -28,9 +29,16 @@ namespace Codex.Controllers
             roleManager = _roleManager;
         }
 
-        public IActionResult Index()
+        public IActionResult Show(int id)
         {
-            return View();
+            var challenge = getReadingChallengeById(id);
+            var user = challenge.User;
+
+            var progress = readingChallengeProgress(user);
+
+            ViewBag.ChallengeProgress = progress;
+
+            return View(challenge);
         }
 
         // display the form for adding a new reading challange
@@ -110,5 +118,40 @@ namespace Codex.Controllers
             // set the end date of the challange to december 31st 
             readingChallenge.EndDate = new DateOnly(currentYear, 12, 31); 
         }
+
+        private ReadingChallenge getReadingChallengeById(int id) {
+            return database.ReadingChallenges
+                .Include(rc => rc.User)
+                .Include(rc => rc.BooksRead)
+                .FirstOrDefault(rc => rc.ReadingChallengeId == id); 
+        }
+
+        private double? readingChallengeProgress(ApplicationUser user)
+        {
+            if (user.HasJoinedChallenge(new ReadingChallenge { StartDate = new DateOnly(DateTime.Now.Year, 1, 1), UserId = user.Id }))
+            {
+                // find the reading challenge 
+                var readingChallenge = database.ReadingChallenges
+                                            .FirstOrDefault(rc => rc.UserId == user.Id
+                                                                && rc.StartDate.Year == DateTime.Now.Year);
+
+                // find how many books the user wants to read 
+                var targetBooks = readingChallenge.TargetNumber;
+
+                // find how many books the user has read
+                var booksRead = 0;
+                if (readingChallenge.BooksRead != null)
+                {
+                    booksRead = readingChallenge.BooksRead.Count;
+                }
+
+                // calculate progress procentage
+                return (double)booksRead / targetBooks * 100;
+            }
+
+            // if the user hasn't joined the reading challenge then return null
+            return null;
+        }
     }
 }
+
