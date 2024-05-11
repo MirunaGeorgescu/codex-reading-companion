@@ -2,12 +2,14 @@
 
 <h2> @Model.User.Name's @Model.StartDate.Year Reading Challange </h2>
 
+
+
 @if (ViewBag.ChallengeProgress != null)
 {
     <div class="card-body">
         <div class="progress">
             <div class="progress-bar" role="progressbar" style="width: @(ViewBag.ChallengeProgress)%;" aria-valuenow="@ViewBag.ChallengeProgress" aria-valuemin="0" aria-valuemax="100">
-                @(ViewBag.ChallengeProgress)% Complete
+                @(ViewBag.ChallengeProgress)% 
             </div>
         </div>
     </div>

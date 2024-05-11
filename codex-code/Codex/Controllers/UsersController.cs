@@ -306,6 +306,7 @@ namespace Codex.Controllers
           {
                 // find the reading challenge 
                 var readingChallenge = database.ReadingChallenges
+                                            .Include(rc => rc.BooksRead)
                                             .FirstOrDefault(rc => rc.UserId == user.Id
                                                                 && rc.StartDate.Year == DateTime.Now.Year);
 
@@ -322,7 +323,7 @@ namespace Codex.Controllers
                 }
 
                 // calculate progress procentage
-                return (double)booksRead / targetBooks * 100;
+                return Math.Round((double)booksRead / targetBooks * 100, 2);
             }
 
             // if the user hasn't joined the reading challenge then return null

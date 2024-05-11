@@ -197,7 +197,7 @@ namespace Codex.Controllers
                 }
 
                 // calculate progress procentage
-                return (double)booksRead / targetBooks * 100;
+                return Math.Round((double)booksRead / targetBooks * 100, 2);
             }
 
             // if the user hasn't joined the reading challenge then return null
