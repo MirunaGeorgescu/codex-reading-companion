@@ -137,6 +137,22 @@ namespace Codex.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var readingChallenge = getReadingChallengeById(id);
+
+            // get the user id for redirecting 
+            var userId = readingChallenge.UserId;
+
+            database.ReadingChallenges.Remove(readingChallenge);
+            database.SaveChanges();
+
+            TempData["message"] = "You've deleted this year's reading challenge!"; 
+
+            return RedirectToAction("Profile", "Users", new { id = userId }); 
+        }
+
         private ApplicationUser getUserById(string id)
         {
             return database.Users.Find(id);

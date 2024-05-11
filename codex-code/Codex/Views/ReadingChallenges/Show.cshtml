@@ -41,4 +41,14 @@ else
     <p> Yoou haven't read any books yet! </p>
 }
 
-<a href="@Url.Action("Edit", "ReadingChallenges", new{id = Model.ReadingChallengeId})" class="btn btn-outline-secondary">Edit</a>
+<div class="row">
+    <div class="col">
+        <a href="@Url.Action("Edit", "ReadingChallenges", new{id = Model.ReadingChallengeId})" class="btn btn-outline-secondary">Edit</a>
+    </div>
+    <div class="col">
+        <form method="post" action="@Url.Action("Delete", "ReadingChallenges", new { id = Model.ReadingChallengeId })">
+            <button class="btn btn-outline-danger" type="submit">Delete</button>
+        </form>
+    </div>
+</div>
+
