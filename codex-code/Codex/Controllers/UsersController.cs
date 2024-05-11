@@ -104,6 +104,7 @@ namespace Codex.Controllers
                .Include(u => u.FavoriteBooks)
                .Include(u => u.Shelves)
                .Include(u => u.BadgesEarned)
+               .Include(u => u.ReadingChallenges)
                .FirstOrDefault(u => u.Id == id);
 
             populateBadges(ref user);

@@ -1,10 +1,30 @@
 ﻿@model Codex.Models.ApplicationUser
 
+
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-info" role="alert">
+        @TempData["message"]
+    </div>
+}
+
 <div class="card">
     <div class="row no-gutters">
-        @*display profile picture*@
+        @*display profile picture + reading challenge*@
         <div class="col-md-4">
-            <img src="@Model.ProfilePhoto" class="card-img" style="width: 150px; height: 150px;" alt="Profile Picture">
+            <div class="d-flex flex-column align-items-center">
+                <img src="@Model.ProfilePhoto" class="card-img mb-2" style="width: 150px; height: 150px;" alt="Profile Picture">
+                <br/>
+
+                @if (!Model.HasJoinedChallenge(new ReadingChallenge { StartDate = new DateOnly(DateTime.Now.Year, 1, 1), UserId = Model.Id }))
+                {
+                    <a href="@Url.Action("New", "ReadingChallenges", new { userId = Model.Id })" class="btn btn-outline-secondary">Join Reading Challenge</a>
+                }
+                else
+                {
+                    <p>Reading challenge view coming soon!</p>
+                }
+            </div>
         </div>
 
         @*display info*@

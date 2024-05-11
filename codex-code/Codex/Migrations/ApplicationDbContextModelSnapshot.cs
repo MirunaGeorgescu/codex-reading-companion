@@ -519,7 +519,7 @@ namespace Codex.Migrations
             modelBuilder.Entity("Codex.Models.ReadingChallenge", b =>
                 {
                     b.HasOne("Codex.Models.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("ReadingChallenges")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -609,6 +609,8 @@ namespace Codex.Migrations
                     b.Navigation("BadgesEarned");
 
                     b.Navigation("FavoriteBooks");
+
+                    b.Navigation("ReadingChallenges");
 
                     b.Navigation("Reviews");
 

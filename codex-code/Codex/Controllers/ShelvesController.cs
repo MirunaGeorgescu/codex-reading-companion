@@ -37,7 +37,6 @@ namespace Codex.Controllers
             return View(shelfToShow);
         }
 
-
         private Shelf getShelfById(int shelfId)
         {
             return database.Shelves.FirstOrDefault(s => s.ShelfId == shelfId); 
