@@ -69,7 +69,7 @@
                     </div>
 
                     @*if the user has set any favorite books then we display them*@
-                    @if (Model.FavoriteBooks != null)
+                    @if (Model.FavoriteBooks != null && Model.FavoriteBooks.Any())
                     {
                         <h5>@Model.Name's Favorite Books</h5>
 
@@ -127,7 +127,7 @@
                 <br />
 
                 @*if the user has badges then we display them*@
-                @if(Model.BadgesEarned != null)
+                @if(Model.BadgesEarned != null && Model.BadgesEarned.Any())
                 {
                     <h5>@Model.Name's Badges</h5>
 
