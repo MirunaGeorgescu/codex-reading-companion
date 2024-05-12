@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Codex")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+888c28d7574dcf136def7ee42a0eb174de0912ea")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f6ff3e1d7d433659be818ad0bb503d55b263df18")]
 [assembly: System.Reflection.AssemblyProductAttribute("Codex")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Codex")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -18,6 +18,9 @@ namespace Codex.Models
         public virtual ICollection<Shelf>? Shelves{ get; set; }
         public virtual ICollection<ReadingBadge>? Badges {  get; set; }
         public virtual ICollection<ReadingChallenge>? ReadingChallenges { get; set; }
+        public virtual ICollection<ApplicationUser>? Followers { get; set; }
+        public virtual ICollection<ApplicationUser>? Following { get; set; }
+
 
 
         [NotMapped]
