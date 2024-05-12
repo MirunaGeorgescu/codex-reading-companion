@@ -2,10 +2,39 @@
 
 <div class="card">
     <div class="row no-gutters">
-        @*display profile picture*@
+       
         <div class="col-md-4">
-            <img src="@Model.ProfilePhoto" class="card-img" style="width: 150px; height: 150px;" alt="Profile Picture">
-        </div>
+            <div class="d-flex flex-column align-items-center">
+                <br/>
+                @*display profile picture*@
+                <img src="@Model.ProfilePhoto" class="card-img" style="width: 150px; height: 150px;" alt="Profile Picture">
+
+                <br />
+
+                @*Follower & Following Count*@
+                <div style="display: flex;">
+                    <span style="margin-left: 20px;">@Model.Followers.Count()</span>
+                    <span style="margin-left: 80px;">@Model.Following.Count()</span>
+                </div>
+
+                <div style="display: flex;">
+                    <span>followers</span>
+                    <span style="margin-left: 20px;">following</span>
+                </div>
+
+                <br />
+
+                @*Follow/ unfollow button*@
+                @if (ViewBag.IsFollowing)
+                {
+                    <a class="btn btn-outline-secondary" href="@Url.Action("Unfollow", "Users", new { unfollowedUserId = Model.Id })">Following</a>
+                }
+                else
+                {
+                    <a class="btn btn-outline-secondary" href="@Url.Action("Follow", "Users", new { followedUserId = Model.Id })">Follow</a>
+                }
+            </div>
+           </div>
 
         @*display info*@
         <div class="col-md-8">

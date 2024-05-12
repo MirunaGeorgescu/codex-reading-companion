@@ -44,9 +44,18 @@ namespace Codex.Controllers
             var user = database.Users
               .Include(u => u.FavoriteBooks)
                .Include(u => u.BadgesEarned)
+               .Include(u => u.Followers)
+               .Include(u => u.Following)
               .FirstOrDefault(u => u.Id == id);
 
             populateBadges(ref user);
+
+            // get the current user in order to know which button to display
+            var currUserId = getCurrentUserId();
+            var currentUser = getUserById (currUserId);
+
+            ViewBag.IsFollowing = isFollowing(currentUser, user);
+
             return View(user);
         }
 
@@ -105,6 +114,8 @@ namespace Codex.Controllers
                .Include(u => u.Shelves)
                .Include(u => u.BadgesEarned)
                .Include(u => u.ReadingChallenges)
+               .Include(u => u.Followers)
+               .Include(u => u.Following)
                .FirstOrDefault(u => u.Id == id);
 
             populateBadges(ref user);
@@ -170,9 +181,65 @@ namespace Codex.Controllers
             }
         }
 
+        public IActionResult Follow(string followedUserId)
+        {
+            var followerUserId = getCurrentUserId();
+
+            var followerUser = getUserById(followerUserId);
+            var followedUser = getUserById(followedUserId);
+
+            if(followedUser != null && followerUser != null)
+            {
+                // if they are not following them already, add them 
+                if(!followerUser.Following.Contains(followedUser))
+                {
+                    followerUser.Following.Add(followedUser); 
+                }
+
+                if (!followedUser.Followers.Contains(followerUser))
+                {
+                    followedUser.Followers.Add(followerUser);
+                }
+
+                database.SaveChanges();
+            }
+
+            return RedirectToAction("Show", "Users", new { id = followedUserId });
+        }
+
+        public IActionResult Unfollow(string unfollowedUserId)
+        {
+            var followerUserId = getCurrentUserId();
+
+            var followerUser = getUserById(followerUserId);
+            var unfollowedUser = getUserById(unfollowedUserId);
+
+            if(unfollowedUser != null && followerUser != null)
+            {
+                // take them out of the lists 
+                if (followerUser.Following.Contains(unfollowedUser))
+                {
+                    followerUser.Following.Remove(unfollowedUser);
+                }
+
+
+                if (unfollowedUser.Followers.Contains(followerUser))
+                {
+                    unfollowedUser.Followers.Remove(followerUser);
+                }
+
+                database.SaveChanges();
+            }
+
+            return RedirectToAction("Show", "Users", new { id = unfollowedUserId });
+        }
+
         private ApplicationUser getUserById(string id)
         {
-            return database.Users.Find(id); 
+            return database.Users
+                 .Include(u => u.Followers)
+                 .Include(u => u.Following)
+                .FirstOrDefault(u => u.Id == id); 
         }
 
         private IEnumerable<ApplicationUser> getAllUsers()
@@ -328,6 +395,45 @@ namespace Codex.Controllers
 
             // if the user hasn't joined the reading challenge then return null
             return null; 
+        }
+
+        private void setAccessRights()
+        {
+            ViewBag.IsAdmin = User.IsInRole("Admin");
+            ViewBag.IsEditor = User.IsInRole("Editor");
+            ViewBag.IsUser = User.IsInRole("User");
+            ViewBag.CurrentUser = userManager.GetUserId(User);
+        }
+
+        private string getCurrentUserId()
+        {
+            return userManager.GetUserId(User); 
+        }
+
+        private bool isFollowing(ApplicationUser user1, ApplicationUser user2)
+        {
+            var followingList = user1.Following.ToList(); 
+
+            foreach(var user in followingList)
+            {
+                if(user2.Id == user.Id)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool isFollowedBy(ApplicationUser user1, ApplicationUser user2)
+        {
+            var followingList = user1.Followers.ToList();
+
+            foreach (var user in followingList)
+            {
+                if (user2.Id == user.Id)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

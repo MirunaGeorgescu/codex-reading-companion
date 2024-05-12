@@ -10,12 +10,29 @@
 
 <div class="card">
     <div class="row no-gutters">
-        @*display profile picture + reading challenge*@
+
         <div class="col-md-4">
             <div class="d-flex flex-column align-items-center">
+                @*display profile picture*@
+                <br />
                 <img src="@Model.ProfilePhoto" class="card-img mb-2" style="width: 150px; height: 150px;" alt="Profile Picture">
                 <br/>
 
+                @*follow/ following count*@
+                <div style="display: flex;">
+                    <span style="margin-left: 10px;">@Model.Followers.Count()</span>
+                    <span style="margin-left: 70px;">@Model.Following.Count()</span>
+                </div>
+
+                <div style="display: flex;">
+                    <span>followers</span>
+                    <span style="margin-left: 20px;">following</span>
+                </div>
+
+                <br />
+
+
+                @*Reading Challenge*@
                 @if (!Model.HasJoinedChallenge(new ReadingChallenge { StartDate = new DateOnly(DateTime.Now.Year, 1, 1), UserId = Model.Id }))
                 {
                     <a href="@Url.Action("New", "ReadingChallenges", new { userId = Model.Id })" class="btn btn-outline-secondary">Join Reading Challenge</a>
