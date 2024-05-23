@@ -23,9 +23,9 @@ namespace Codex.Models
 
         // streaks
         public int? Streak { get; set; }
-        public DateOnly LastStreakDay { get; set; }
+        public DateTime LastStreakDay { get; set; }
         public int PagesReadToday { get; set; }
-        public DateOnly LastUpdate { get; set; }
+        public DateTime LastUpdate { get; set; }
 
 
         [NotMapped]

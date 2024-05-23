@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
+using System.Net;
 using System.Reflection.Metadata;
 
 namespace Codex.Controllers
@@ -129,6 +131,8 @@ namespace Codex.Controllers
                 ViewBag.Year = DateTime.Now.Year;
             }
 
+            ViewBag.today = DateTime.Now;
+            ViewBag.yesterday = DateTime.Now.AddDays(-1);
             return View(user);
         }
 
@@ -275,13 +279,28 @@ namespace Codex.Controllers
                 return View(oldBookOnShelf);
             }
 
-            if (update.CurrentPage < oldBookOnShelf.CurrentPage)
+            if (update.CurrentPage <= oldBookOnShelf.CurrentPage)
             {
                 ModelState.AddModelError("CurrentPage", "The updated page should be greater than the current page!");
                 return View(oldBookOnShelf);
             }
-         
-      
+
+            // find book 
+            var book = getBookById(bookId);
+
+            if(book.NumberOfPages < update.CurrentPage) {
+                ModelState.AddModelError("CurrentPage", "The updated page should be less than the total number of pages!");
+                return View(oldBookOnShelf);
+            }
+
+            // if the user has finished the book, move book to the read shelf 
+            if (book.NumberOfPages == update.CurrentPage)
+            {
+                ModelState.AddModelError("CurrentPage", "If you finished the book, change the shelf from the book details!");
+                return View(oldBookOnShelf);
+            }
+
+
 
             var pagesRead = update.CurrentPage - oldBookOnShelf.CurrentPage;
 
@@ -289,6 +308,45 @@ namespace Codex.Controllers
             oldBookOnShelf.CurrentPage = update.CurrentPage;
 
             database.SaveChanges();
+
+            // find user
+            var user = getUserById(userId);
+
+            DateTime today = DateTime.Now;
+
+            // streak tracking 
+            // check if user has already read anything today
+            if (sameDate(today, user.LastUpdate) && user.PagesReadToday != 0)
+            {
+                user.PagesReadToday += (int)pagesRead;
+            }
+            else
+            {
+                user.PagesReadToday = (int)pagesRead;
+                user.LastUpdate = today;
+            }
+
+           
+
+            // check if the user has read more than 30 pages today and set the streak
+            if (user.PagesReadToday >= 30 )
+            {
+                DateTime yesterday = today.AddDays(-1);
+
+                if (sameDate(yesterday, user.LastStreakDay))
+                {
+                    user.LastStreakDay = today;
+                    user.Streak++;
+                }
+                else
+                {
+                    user.LastStreakDay = today;
+                    user.Streak = 1;
+                }  
+            }
+            
+
+
 
             return RedirectToAction("Show", "Shelves", new { shelfId = oldBookOnShelf.ShelfId });
         }
@@ -502,5 +560,18 @@ namespace Codex.Controllers
                 .FirstOrDefault(book => book.BookId == id);
             return book;
         }
+
+        private bool sameDate(DateTime date1, DateTime date2)
+        {
+            if(date1 == date2) return true;
+
+            if(date1.Year == date2.Year)
+                if(date1.Month == date2.Month)
+                    if(date1.Day == date2.Day)
+                        return true;
+
+            return false; 
+        }
+       
     }
 }
