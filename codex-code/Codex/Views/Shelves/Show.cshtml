@@ -16,7 +16,29 @@
                         <h4 class="card-title">@bookOnShelf.Book.Title</h4>
                         <h5 class="card-subtitle mb-2 text-muted">by @bookOnShelf.Book.Author</h5>
                         <p class="card-text">Rating: @bookOnShelf.Book.Rating</p>
-                        <a class="btn btn-light" href="@Url.Action("Show", "Books", new{id = bookOnShelf.Book.BookId})">Show details</a>
+
+                        @*update progress for user's currently reading shelf*@
+                        @if (bookOnShelf.Shelf.Name == "Currently reading" && ViewBag.CurrentUser.Id == bookOnShelf.Shelf.UserId)
+                        {
+
+                            <div class="d-flex justify-content-between">
+                                <a class="btn btn-outline-secondary" href="@Url.Action("Show", "Books", new { id = bookOnShelf.Book.BookId })">Show details</a>
+                                <a class="btn btn-outline-secondary" href="@Url.Action("UpdateProgress", "Users", new { userId = ViewBag.CurrentUser.Id, bookId = bookOnShelf.BookId })">Update Progress</a>
+                            </div>
+
+
+                            @if(bookOnShelf.CurrentPage == null)
+                                bookOnShelf.CurrentPage = 0; 
+
+                            <div class="progress mt-3">
+                                <div class="progress-bar" role="progressbar" style="width: @(bookOnShelf.CurrentPage * 100 / bookOnShelf.Book.NumberOfPages)%" aria-valuenow="@bookOnShelf.CurrentPage" aria-valuemin="0" aria-valuemax="@bookOnShelf.Book.NumberOfPages">
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="btn btn-outline-secondary" href="@Url.Action("Show", "Books", new { id = bookOnShelf.Book.BookId })">Show details</a>
+                        }
                     </div>
                 </div>
             </div>

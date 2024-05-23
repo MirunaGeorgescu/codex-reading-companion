@@ -234,6 +234,66 @@ namespace Codex.Controllers
             return RedirectToAction("Show", "Users", new { id = unfollowedUserId });
         }
 
+        public IActionResult UpdateProgress(string userId, int bookId)
+        {
+            ApplicationUser user = getUserById(userId);
+            Book book = getBookById(bookId);
+
+            // find the currently reading shelf 
+            Shelf currentlyReadingShelf = database.Shelves
+                                              .FirstOrDefault(s => s.Name == "Currently reading" 
+                                                                    && s.UserId == userId);  
+            // find the book on shelf
+            BookOnShelf bookOnShelf = database.BooksOnShelves
+                                            .Include(bos => bos.Book)
+                                            .Include(bos => bos.Shelf)
+                                            .FirstOrDefault(bos => bos.BookId ==  bookId 
+                                                && bos.ShelfId == currentlyReadingShelf.ShelfId);
+
+
+            return View(bookOnShelf);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateProgress(string userId, int bookId, BookOnShelf update)
+        {
+            // find the currently reading shelf 
+            Shelf currentlyReadingShelf = database.Shelves
+                                              .FirstOrDefault(s => s.Name == "Currently reading"
+                                                                    && s.UserId == userId);
+
+            // find the book on shelf 
+            BookOnShelf oldBookOnShelf = database.BooksOnShelves
+                                            .Include(bos => bos.Book)
+                                            .Include(bos => bos.Shelf)
+                                            .FirstOrDefault(bos => bos.BookId == bookId
+                                                && bos.ShelfId == currentlyReadingShelf.ShelfId);
+
+            if(update.CurrentPage < 0)
+            {
+                ModelState.AddModelError("CurrentPage", "The updated page can't be negative!");
+                return View(oldBookOnShelf);
+            }
+
+            if (update.CurrentPage < oldBookOnShelf.CurrentPage)
+            {
+                ModelState.AddModelError("CurrentPage", "The updated page should be greater than the current page!");
+                return View(oldBookOnShelf);
+            }
+         
+      
+
+            var pagesRead = update.CurrentPage - oldBookOnShelf.CurrentPage;
+
+            // update the current page 
+            oldBookOnShelf.CurrentPage = update.CurrentPage;
+
+            database.SaveChanges();
+
+            return RedirectToAction("Show", "Shelves", new { shelfId = oldBookOnShelf.ShelfId });
+        }
+
+
         private ApplicationUser getUserById(string id)
         {
             return database.Users
@@ -434,6 +494,13 @@ namespace Codex.Controllers
             }
 
             return false;
+        }
+
+        private Book getBookById(int id)
+        {
+            Book book = database.Books
+                .FirstOrDefault(book => book.BookId == id);
+            return book;
         }
     }
 }
