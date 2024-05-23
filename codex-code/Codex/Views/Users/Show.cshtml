@@ -9,12 +9,25 @@
                 @*display profile picture*@
                 <img src="@Model.ProfilePhoto" class="card-img" style="width: 150px; height: 150px;" alt="Profile Picture">
 
-                <br />
+                
+
+                @if ((Model.LastStreakDay.Year == ViewBag.today.Year
+                && Model.LastStreakDay.Month == ViewBag.today.Month
+                && Model.LastStreakDay.Day == ViewBag.today.Day) || (Model.LastStreakDay.Year == ViewBag.yesterday.Year
+                && Model.LastStreakDay.Month == ViewBag.yesterday.Month
+                && Model.LastStreakDay.Day == ViewBag.yesterday.Day))
+                {
+
+                    <div class="mt-3">
+                        <p>@Model.Streak <i class="bi bi-fire"></i></p>
+                    </div>
+
+                }
 
                 @*Follower & Following Count*@
                 <div style="display: flex;">
-                    <span style="margin-left: 20px;">@Model.Followers.Count()</span>
-                    <span style="margin-left: 80px;">@Model.Following.Count()</span>
+                    <span style="margin-left: 5px;">@Model.Followers.Count()</span>
+                    <span style="margin-left: 70px;">@Model.Following.Count()</span>
                 </div>
 
                 <div style="display: flex;">
@@ -33,6 +46,10 @@
                 {
                     <a class="btn btn-outline-secondary" href="@Url.Action("Follow", "Users", new { followedUserId = Model.Id })">Follow</a>
                 }
+
+
+              
+
             </div>
            </div>
 

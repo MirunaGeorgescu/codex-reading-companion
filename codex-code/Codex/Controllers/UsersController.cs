@@ -58,6 +58,9 @@ namespace Codex.Controllers
 
             ViewBag.IsFollowing = isFollowing(currentUser, user);
 
+            ViewBag.today = DateTime.Now;
+            ViewBag.yesterday = DateTime.Now.AddDays(-1);
+
             return View(user);
         }
 
