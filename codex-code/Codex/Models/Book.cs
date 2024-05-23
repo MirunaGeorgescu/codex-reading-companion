@@ -22,9 +22,14 @@ namespace Codex.Models
         public int? GenreId { get; set; }
         public virtual Genre? Genre { get; set; }
 
+        [Required(ErrorMessage = "The number of pages is required!")]
+        public int NumberOfPages { get; set; }
+
         // public ICollection<string>? Tags { get; set; }
+
         [Required(ErrorMessage = "The synopsis is required!")]
         public string Synopsis { get; set; }
+
 
         [Required(ErrorMessage = "The publication date is required!")]
         public DateOnly PublicationDate { get; set; }
