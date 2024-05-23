@@ -21,10 +21,11 @@ namespace Codex.Models
         public virtual ICollection<ApplicationUser>? Followers { get; set; }
         public virtual ICollection<ApplicationUser>? Following { get; set; }
 
+        // streaks
         public int? Streak { get; set; }
-        public DateTime? LastReadingDate { get; set; }
-
-
+        public DateOnly LastStreakDay { get; set; }
+        public int PagesReadToday { get; set; }
+        public DateOnly LastUpdate { get; set; }
 
 
         [NotMapped]
