@@ -11,6 +11,9 @@ namespace Codex.Models
         public int? ShelfId {  get; set; }
         public virtual Shelf? Shelf { get; set; }
 
+        // for the books the user is currently reading 
+        public int? CurrentPage { get; set; }
+
         [NotMapped]
         public IEnumerable<SelectListItem>? AllShelves { get; set; }
     }
