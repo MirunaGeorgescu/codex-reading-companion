@@ -22,6 +22,7 @@ namespace Codex.Data
         public DbSet<ReadingBadge> ReadingBadges { get; set; }
         public DbSet<BadgeEarned> BadgesEarned { get; set; }
         public DbSet<ReadingChallenge> ReadingChallenges { get; set; }
+        public DbSet<BuddyRead> BuddyReads { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
