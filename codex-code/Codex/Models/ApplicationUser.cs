@@ -20,6 +20,7 @@ namespace Codex.Models
         public virtual ICollection<ReadingChallenge>? ReadingChallenges { get; set; }
         public virtual ICollection<ApplicationUser>? Followers { get; set; }
         public virtual ICollection<ApplicationUser>? Following { get; set; }
+        public virtual ICollection<BuddyReadParticipant>? BuddyReadParticipations { get; set; }
 
         // streaks
         public int? Streak { get; set; }
@@ -39,6 +40,7 @@ namespace Codex.Models
 
         [NotMapped]
         public IEnumerable<SelectListItem>? ShelvesOptions { get; set; }
+
 
         public void UseDefaultProfilePictureUrl()
         {
