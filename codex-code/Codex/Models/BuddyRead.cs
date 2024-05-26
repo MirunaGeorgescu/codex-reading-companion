@@ -14,7 +14,9 @@ namespace Codex.Models
         public virtual Book? Book { get; set; }
 
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
+
+        public List<string>? ParticipantIds { get; set; }
 
         public virtual ICollection<Annotation>? Annotations { get; set; }
         public virtual ICollection<BuddyReadParticipant>? Participants { get;}
