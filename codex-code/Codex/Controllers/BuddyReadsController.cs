@@ -58,9 +58,11 @@ namespace Codex.Controllers
                 database.SaveChanges();
 
 
-                var br = database.BuddyReads.FirstOrDefault (br => br.BookId == newBuddyRead.BookId
-                && br.StartDate == newBuddyRead.StartDate
-                && br.ParticipantIds.Last() == currentUserId);
+                var br = database.BuddyReads
+                    .Include(b => b.Book)
+                    .FirstOrDefault (b => b.BookId == newBuddyRead.BookId
+                && b.StartDate == newBuddyRead.StartDate
+                && b.ParticipantIds.Last() == currentUserId);
 
                 foreach(var participantId in newBuddyRead.ParticipantIds)
                 {
@@ -70,9 +72,15 @@ namespace Codex.Controllers
                     };
 
                     database.BuddyReadsParticipants.Add(newBuddyReadParticipant);
+
+                    // add the book to their currently reading shelf
+                    moveBookToCurrentlyReadingShelf((int)br.BookId, participantId);
+
                 }
 
                 database.SaveChanges();
+
+              
                 return RedirectToAction("Profile", "Users", new { id = currentUserId });
             }
             else
@@ -111,6 +119,31 @@ namespace Codex.Controllers
             }
 
             return friends; 
+        }
+
+        private void moveBookToCurrentlyReadingShelf(int bookId, string userId)
+        {
+            var currentlyReadingShelf = database.Shelves
+                                            .Include(s => s.BooksOnShelves)
+                                            .FirstOrDefault(s => s.UserId == userId && s.Name == "Currently reading");
+
+            // if the user has shelved the book before, delete it from that shelf
+            var bookOnShelf = database.BooksOnShelves
+                                .Include(bos => bos.Shelf)
+                                .FirstOrDefault(bos => bos.BookId == bookId && bos.Shelf.UserId == userId); 
+            if(bookOnShelf != null)
+                database.BooksOnShelves.Remove(bookOnShelf);
+
+            // add the book to the currently reading list of the participant 
+            var buddyReadOnShelf = new BookOnShelf
+            { 
+                BookId = bookId,
+                ShelfId = currentlyReadingShelf.ShelfId, 
+                CurrentPage = 0
+            };
+
+            database.BooksOnShelves.Add(buddyReadOnShelf);
+            database.SaveChanges();
         }
     }
 }
