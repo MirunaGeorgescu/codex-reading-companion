@@ -38,8 +38,7 @@ else
                         </div>
                         <div class="card-body">
                             <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: @progressList[i].CurrentPage / (double)@Model.Book.NumberOfPages * 100)%">
-                                </div>
+                                <div class="progress-bar" role="progressbar" style="width: @(progressList[i].CurrentPage * 100 / (double)Model.Book.NumberOfPages)%;" aria-valuenow="@progressList[i].CurrentPage" aria-valuemin="0" aria-valuemax="@Model.Book.NumberOfPages"></div>
                             </div>
                         </div>
                         <div class="card-footer">
@@ -55,8 +54,7 @@ else
                         </div>
                         <div class="card-body">
                             <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: @progressList[i].CurrentPage / (double)@Model.Book.NumberOfPages * 100)%">
-                                </div>
+                                <div class="progress-bar" role="progressbar" style="width: @(progressList[i].CurrentPage * 100 / (double)Model.Book.NumberOfPages)%;" aria-valuenow="@progressList[i].CurrentPage" aria-valuemin="0" aria-valuemax="@Model.Book.NumberOfPages"></div>
                             </div>
                         </div>
                     </div>
