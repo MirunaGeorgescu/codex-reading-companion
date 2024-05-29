@@ -103,36 +103,40 @@ namespace Codex.Controllers
         {
             var buddyRead = GetBuddyReadById(id);
 
-            var buddyReadParticipants = database.BuddyReadsParticipants
-                                        .Where(brp => brp.BuddyReadId == id)
-                                        .Include(brp => brp.User)
-                                            .ThenInclude(u => u.Shelves)
-                                        .ToList();
-
-            var currentUserId = userManager.GetUserId(User);
-            var currentUser = getUserById(currentUserId);
-
-            var participantProgressList = new List<ParticipantProgress>();
-
-            var progress = getParticipantProgress(currentUser, buddyRead.Book.BookId);
-
-            participantProgressList.Add(progress);
-
-
-            foreach (var participant in buddyReadParticipants)
+            if(buddyRead != null)
             {
-                if(participant.UserId !=  currentUserId)
-                {
-                    var user = getUserById(participant.UserId);
-                    progress = getParticipantProgress(user, buddyRead.Book.BookId); 
+                var buddyReadParticipants = database.BuddyReadsParticipants
+                                      .Where(brp => brp.BuddyReadId == id)
+                                      .Include(brp => brp.User)
+                                          .ThenInclude(u => u.Shelves)
+                                      .ToList();
 
-                    participantProgressList.Add(progress);
+                var currentUserId = userManager.GetUserId(User);
+                var currentUser = getUserById(currentUserId);
+
+                var participantProgressList = new List<ParticipantProgress>();
+
+                var progress = getParticipantProgress(currentUser, buddyRead.Book.BookId);
+
+                participantProgressList.Add(progress);
+
+
+                foreach (var participant in buddyReadParticipants)
+                {
+                    if (participant.UserId != currentUserId)
+                    {
+                        var user = getUserById(participant.UserId);
+                        progress = getParticipantProgress(user, buddyRead.Book.BookId);
+
+                        participantProgressList.Add(progress);
+                    }
+
                 }
 
+                ViewBag.ProgressList = participantProgressList;
+                ViewBag.ProgressListLenth = participantProgressList.Count;
             }
 
-            ViewBag.ProgressList = participantProgressList;
-            ViewBag.ProgressListLenth = participantProgressList.Count;
             return View(buddyRead);
         }
 

@@ -6,56 +6,62 @@
 
 }
 
-
-<div class="row">
-    <div class="col-md-4">
-        <div class="card" style="width: 100%; position: sticky; top: 0;">
-            <img src="@Model.Book.CoverImage" alt="@Model.Book.Title Cover Image" style="max-width: 100%; height: auto;" />
-            <div class="card-body">
-                <h4 class="card-title">@Model.Book.Title</h4>
-                <h5 class="card-subtitle mb-2 text-muted">by @Model.Book.Author</h5>
+@if(Model == null)
+{
+    <p>No Buddy Read found :(</p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card" style="width: 100%; position: sticky; top: 0;">
+                <img src="@Model.Book.CoverImage" alt="@Model.Book.Title Cover Image" style="max-width: 100%; height: auto;" />
+                <div class="card-body">
+                    <h4 class="card-title">@Model.Book.Title</h4>
+                    <h5 class="card-subtitle mb-2 text-muted">by @Model.Book.Author</h5>
+                </div>
+                <form asp-action="Delete" asp-route-id="@Model.BuddyReadId" method="post">
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
             </div>
-            <form asp-action="Delete" asp-route-id="@Model.BuddyReadId" method="post">
-                <button type="submit" class="btn btn-outline-danger">Delete</button>
-            </form>
+        </div>
+
+        <div class="col-md-8">
+            @for (int i = 0; i < ViewBag.ProgressListLenth; i++)
+            {
+                // the current user
+                if (i == 0)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            Your Progress
+                        </div>
+                        <div class="card-body">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: @progressList[i].CurrentPage / (double)@Model.Book.NumberOfPages * 100)%">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a class="btn btn-outline-secondary" href="@Url.Action("UpdateProgress", "Users", new { userId = progressList[i].Id, bookId = Model.BookId })">Update Progress</a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            @progressList[i].UserName
+                        </div>
+                        <div class="card-body">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: @progressList[i].CurrentPage / (double)@Model.Book.NumberOfPages * 100)%">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
         </div>
     </div>
-
-    <div class="col-md-8">
-        @for (int i = 0; i < ViewBag.ProgressListLenth; i++)
-        {
-            // the current user
-            if(i == 0)
-            {
-                <div class="card mb-3">
-                    <div class="card-header">
-                        Your Progress
-                    </div>
-                    <div class="card-body">
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: @progressList[i].CurrentPage / (double)@Model.Book.NumberOfPages * 100)%">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn btn-outline-secondary" href="@Url.Action("UpdateProgress", "Users", new { userId = progressList[i].Id, bookId = Model.BookId })">Update Progress</a>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="card mb-3">
-                    <div class="card-header">
-                       @progressList[i].UserName
-                    </div>
-                    <div class="card-body">
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: @progressList[i].CurrentPage / (double)@Model.Book.NumberOfPages * 100)%">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-    </div>
-</div>
+}
