@@ -15,6 +15,9 @@
                 <h4 class="card-title">@Model.Book.Title</h4>
                 <h5 class="card-subtitle mb-2 text-muted">by @Model.Book.Author</h5>
             </div>
+            <form asp-action="Delete" asp-route-id="@Model.BuddyReadId" method="post">
+                <button type="submit" class="btn btn-outline-danger">Delete</button>
+            </form>
         </div>
     </div>
 

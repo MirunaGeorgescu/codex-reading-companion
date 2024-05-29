@@ -136,7 +136,17 @@ namespace Codex.Controllers
             return View(buddyRead);
         }
 
-        
+        public IActionResult Delete(int id)
+        {
+            var currentUserId = userManager.GetUserId(User);
+
+            var buddyRead = GetBuddyReadById(id);
+
+            database.BuddyReads.Remove(buddyRead);
+            database.SaveChanges();
+
+            return RedirectToAction("Profile", "Users", new {id = currentUserId});
+        }
 
         private BuddyRead GetBuddyReadById(int id)
         {
