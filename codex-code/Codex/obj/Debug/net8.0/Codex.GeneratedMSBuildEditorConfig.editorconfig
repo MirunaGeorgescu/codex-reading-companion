@@ -46,6 +46,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/Annotations/New.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQW5ub3RhdGlvbnNcTmV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/Books/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -60,6 +64,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/Books/Show.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcU2hvdy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/BuddyReads/New.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQnVkZHlSZWFkc1xOZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/BuddyReads/Show.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQnVkZHlSZWFkc1xTaG93LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/Genres/Edit.cshtml]
@@ -92,6 +104,18 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/ReadingBadges/New.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVhZGluZ0JhZGdlc1xOZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/ReadingChallenges/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVhZGluZ0NoYWxsZW5nZXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/ReadingChallenges/New.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVhZGluZ0NoYWxsZW5nZXNcTmV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/ReadingChallenges/Show.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVhZGluZ0NoYWxsZW5nZXNcU2hvdy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/Reviews/Edit.cshtml]
@@ -132,6 +156,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/Users/Show.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcU2hvdy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/Users/UpdateProgress.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcVXBkYXRlUHJvZ3Jlc3MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/mirub/Documents/GitHub/codex-reading-companion/codex-code/Codex/Views/_ViewImports.cshtml]

@@ -20,8 +20,11 @@ namespace Codex.Data
         public DbSet<Shelf> Shelves { get; set; }
         public DbSet<BookOnShelf> BooksOnShelves { get; set;}
         public DbSet<ReadingBadge> ReadingBadges { get; set; }
-        
         public DbSet<BadgeEarned> BadgesEarned { get; set; }
+        public DbSet<ReadingChallenge> ReadingChallenges { get; set; }
+        public DbSet<BuddyRead> BuddyReads { get; set; }
+        public DbSet<Annotation> Annotations { get; set; }
+        public DbSet<BuddyReadParticipant> BuddyReadsParticipants { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -60,6 +63,22 @@ namespace Codex.Data
                 .HasOne(be => be.Badge)
                 .WithMany(b => b.BadgesEarned)
                 .HasForeignKey(be => be.BadgeId);
+
+            //BUDDYREAD-USER
+            //primary key made up of BuddyReadId and UserId
+            modelBuilder.Entity<BuddyReadParticipant>()
+                           .HasKey(brp => new { brp.BuddyReadId, brp.UserId });
+
+            // relationship between buddy reads and users
+            modelBuilder.Entity<BuddyReadParticipant>()
+                .HasOne(brp => brp.BuddyRead)
+                .WithMany(br => br.Participants)
+                .HasForeignKey(brp => brp.BuddyReadId);
+
+            modelBuilder.Entity<BuddyReadParticipant>()
+                .HasOne(brp => brp.User)
+                .WithMany(u => u.BuddyReadParticipations)
+                .HasForeignKey(brp => brp.UserId);
 
         }
 

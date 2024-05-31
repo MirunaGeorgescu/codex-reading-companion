@@ -22,6 +22,54 @@ namespace Codex.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ApplicationUserApplicationUser", b =>
+                {
+                    b.Property<string>("FollowersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FollowingId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("FollowersId", "FollowingId");
+
+                    b.HasIndex("FollowingId");
+
+                    b.ToTable("ApplicationUserApplicationUser");
+                });
+
+            modelBuilder.Entity("Codex.Models.Annotation", b =>
+                {
+                    b.Property<int>("AnnotationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AnnotationId"));
+
+                    b.Property<int?>("BuddyReadId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Page")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("AnnotationId");
+
+                    b.HasIndex("BuddyReadId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Annotations");
+                });
+
             modelBuilder.Entity("Codex.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -41,6 +89,12 @@ namespace Codex.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("LastStreakDay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -58,6 +112,9 @@ namespace Codex.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<int>("PagesReadToday")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -72,6 +129,9 @@ namespace Codex.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Streak")
+                        .HasColumnType("int");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -134,11 +194,17 @@ namespace Codex.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
+                    b.Property<int>("NumberOfPages")
+                        .HasColumnType("int");
+
                     b.Property<DateOnly>("PublicationDate")
                         .HasColumnType("date");
 
                     b.Property<float?>("Rating")
                         .HasColumnType("real");
+
+                    b.Property<int?>("ReadingChallengeId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Synopsis")
                         .IsRequired()
@@ -154,6 +220,8 @@ namespace Codex.Migrations
 
                     b.HasIndex("GenreId");
 
+                    b.HasIndex("ReadingChallengeId");
+
                     b.ToTable("Books");
                 });
 
@@ -165,11 +233,56 @@ namespace Codex.Migrations
                     b.Property<int?>("ShelfId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CurrentPage")
+                        .HasColumnType("int");
+
                     b.HasKey("BookId", "ShelfId");
 
                     b.HasIndex("ShelfId");
 
                     b.ToTable("BooksOnShelves");
+                });
+
+            modelBuilder.Entity("Codex.Models.BuddyRead", b =>
+                {
+                    b.Property<int>("BuddyReadId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BuddyReadId"));
+
+                    b.Property<int?>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ParticipantIds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("BuddyReadId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("BuddyReads");
+                });
+
+            modelBuilder.Entity("Codex.Models.BuddyReadParticipant", b =>
+                {
+                    b.Property<int?>("BuddyReadId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("BuddyReadId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BuddyReadsParticipants");
                 });
 
             modelBuilder.Entity("Codex.Models.Genre", b =>
@@ -226,6 +339,33 @@ namespace Codex.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("ReadingBadges");
+                });
+
+            modelBuilder.Entity("Codex.Models.ReadingChallenge", b =>
+                {
+                    b.Property<int>("ReadingChallengeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReadingChallengeId"));
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("TargetNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ReadingChallengeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ReadingChallenges");
                 });
 
             modelBuilder.Entity("Codex.Models.Review", b =>
@@ -419,6 +559,36 @@ namespace Codex.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ApplicationUserApplicationUser", b =>
+                {
+                    b.HasOne("Codex.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("FollowersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Codex.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Codex.Models.Annotation", b =>
+                {
+                    b.HasOne("Codex.Models.BuddyRead", "BuddyRead")
+                        .WithMany("Annotations")
+                        .HasForeignKey("BuddyReadId");
+
+                    b.HasOne("Codex.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("BuddyRead");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Codex.Models.BadgeEarned", b =>
                 {
                     b.HasOne("Codex.Models.ReadingBadge", "Badge")
@@ -450,6 +620,10 @@ namespace Codex.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Codex.Models.ReadingChallenge", null)
+                        .WithMany("BooksRead")
+                        .HasForeignKey("ReadingChallengeId");
+
                     b.Navigation("Genre");
                 });
 
@@ -472,11 +646,48 @@ namespace Codex.Migrations
                     b.Navigation("Shelf");
                 });
 
+            modelBuilder.Entity("Codex.Models.BuddyRead", b =>
+                {
+                    b.HasOne("Codex.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId");
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("Codex.Models.BuddyReadParticipant", b =>
+                {
+                    b.HasOne("Codex.Models.BuddyRead", "BuddyRead")
+                        .WithMany("Participants")
+                        .HasForeignKey("BuddyReadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Codex.Models.ApplicationUser", "User")
+                        .WithMany("BuddyReadParticipations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BuddyRead");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Codex.Models.ReadingBadge", b =>
                 {
                     b.HasOne("Codex.Models.ApplicationUser", null)
                         .WithMany("Badges")
                         .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("Codex.Models.ReadingChallenge", b =>
+                {
+                    b.HasOne("Codex.Models.ApplicationUser", "User")
+                        .WithMany("ReadingChallenges")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Codex.Models.Review", b =>
@@ -560,7 +771,11 @@ namespace Codex.Migrations
 
                     b.Navigation("BadgesEarned");
 
+                    b.Navigation("BuddyReadParticipations");
+
                     b.Navigation("FavoriteBooks");
+
+                    b.Navigation("ReadingChallenges");
 
                     b.Navigation("Reviews");
 
@@ -574,9 +789,21 @@ namespace Codex.Migrations
                     b.Navigation("Reviews");
                 });
 
+            modelBuilder.Entity("Codex.Models.BuddyRead", b =>
+                {
+                    b.Navigation("Annotations");
+
+                    b.Navigation("Participants");
+                });
+
             modelBuilder.Entity("Codex.Models.ReadingBadge", b =>
                 {
                     b.Navigation("BadgesEarned");
+                });
+
+            modelBuilder.Entity("Codex.Models.ReadingChallenge", b =>
+                {
+                    b.Navigation("BooksRead");
                 });
 
             modelBuilder.Entity("Codex.Models.Shelf", b =>

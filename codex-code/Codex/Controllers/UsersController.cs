@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
+using System.Net;
 using System.Reflection.Metadata;
 
 namespace Codex.Controllers
@@ -44,9 +46,21 @@ namespace Codex.Controllers
             var user = database.Users
               .Include(u => u.FavoriteBooks)
                .Include(u => u.BadgesEarned)
+               .Include(u => u.Followers)
+               .Include(u => u.Following)
               .FirstOrDefault(u => u.Id == id);
 
             populateBadges(ref user);
+
+            // get the current user in order to know which button to display
+            var currUserId = getCurrentUserId();
+            var currentUser = getUserById (currUserId);
+
+            ViewBag.IsFollowing = isFollowing(currentUser, user);
+
+            ViewBag.today = DateTime.Now;
+            ViewBag.yesterday = DateTime.Now.AddDays(-1);
+
             return View(user);
         }
 
@@ -104,9 +118,24 @@ namespace Codex.Controllers
                .Include(u => u.FavoriteBooks)
                .Include(u => u.Shelves)
                .Include(u => u.BadgesEarned)
+               .Include(u => u.ReadingChallenges)
+               .Include(u => u.Followers)
+               .Include(u => u.Following)
                .FirstOrDefault(u => u.Id == id);
 
             populateBadges(ref user);
+
+            // calculate the progress in the reading challenge 
+            var challengeProgress = readingChallengeProgress(user);
+
+            if(challengeProgress != null)
+            {
+                ViewBag.ChallengeProgress = challengeProgress;
+                ViewBag.Year = DateTime.Now.Year;
+            }
+
+            ViewBag.today = DateTime.Now;
+            ViewBag.yesterday = DateTime.Now.AddDays(-1);
             return View(user);
         }
 
@@ -159,9 +188,179 @@ namespace Codex.Controllers
             }
         }
 
+        public IActionResult Follow(string followedUserId)
+        {
+            var followerUserId = getCurrentUserId();
+
+            var followerUser = getUserById(followerUserId);
+            var followedUser = getUserById(followedUserId);
+
+            if(followedUser != null && followerUser != null)
+            {
+                // if they are not following them already, add them 
+                if(!followerUser.Following.Contains(followedUser))
+                {
+                    followerUser.Following.Add(followedUser); 
+                }
+
+                if (!followedUser.Followers.Contains(followerUser))
+                {
+                    followedUser.Followers.Add(followerUser);
+                }
+
+                database.SaveChanges();
+            }
+
+            return RedirectToAction("Show", "Users", new { id = followedUserId });
+        }
+
+        public IActionResult Unfollow(string unfollowedUserId)
+        {
+            var followerUserId = getCurrentUserId();
+
+            var followerUser = getUserById(followerUserId);
+            var unfollowedUser = getUserById(unfollowedUserId);
+
+            if(unfollowedUser != null && followerUser != null)
+            {
+                // take them out of the lists 
+                if (followerUser.Following.Contains(unfollowedUser))
+                {
+                    followerUser.Following.Remove(unfollowedUser);
+                }
+
+
+                if (unfollowedUser.Followers.Contains(followerUser))
+                {
+                    unfollowedUser.Followers.Remove(followerUser);
+                }
+
+                database.SaveChanges();
+            }
+
+            return RedirectToAction("Show", "Users", new { id = unfollowedUserId });
+        }
+
+        public IActionResult UpdateProgress(string userId, int bookId)
+        {
+            ApplicationUser user = getUserById(userId);
+            Book book = getBookById(bookId);
+
+            // find the currently reading shelf 
+            Shelf currentlyReadingShelf = database.Shelves
+                                              .FirstOrDefault(s => s.Name == "Currently reading" 
+                                                                    && s.UserId == userId);  
+            // find the book on shelf
+            BookOnShelf bookOnShelf = database.BooksOnShelves
+                                            .Include(bos => bos.Book)
+                                            .Include(bos => bos.Shelf)
+                                            .FirstOrDefault(bos => bos.BookId ==  bookId 
+                                                && bos.ShelfId == currentlyReadingShelf.ShelfId);
+
+
+            return View(bookOnShelf);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateProgress(string userId, int bookId, BookOnShelf update)
+        {
+            // find the currently reading shelf 
+            Shelf currentlyReadingShelf = database.Shelves
+                                              .FirstOrDefault(s => s.Name == "Currently reading"
+                                                                    && s.UserId == userId);
+
+            // find the book on shelf 
+            BookOnShelf oldBookOnShelf = database.BooksOnShelves
+                                            .Include(bos => bos.Book)
+                                            .Include(bos => bos.Shelf)
+                                            .FirstOrDefault(bos => bos.BookId == bookId
+                                                && bos.ShelfId == currentlyReadingShelf.ShelfId);
+
+            if(update.CurrentPage < 0)
+            {
+                ModelState.AddModelError("CurrentPage", "The updated page can't be negative!");
+                return View(oldBookOnShelf);
+            }
+
+            if (update.CurrentPage <= oldBookOnShelf.CurrentPage)
+            {
+                ModelState.AddModelError("CurrentPage", "The updated page should be greater than the current page!");
+                return View(oldBookOnShelf);
+            }
+
+            // find book 
+            var book = getBookById(bookId);
+
+            if(book.NumberOfPages < update.CurrentPage) {
+                ModelState.AddModelError("CurrentPage", "The updated page should be less than the total number of pages!");
+                return View(oldBookOnShelf);
+            }
+
+            // if the user has finished the book, move book to the read shelf 
+            if (book.NumberOfPages == update.CurrentPage)
+            {
+                ModelState.AddModelError("CurrentPage", "If you finished the book, change the shelf from the book details!");
+                return View(oldBookOnShelf);
+            }
+
+
+
+            var pagesRead = update.CurrentPage - oldBookOnShelf.CurrentPage;
+
+            // update the current page 
+            oldBookOnShelf.CurrentPage = update.CurrentPage;
+
+            database.SaveChanges();
+
+            // find user
+            var user = getUserById(userId);
+
+            DateTime today = DateTime.Now;
+
+            // streak tracking 
+            // check if user has already read anything today
+            if (sameDate(today, user.LastUpdate) && user.PagesReadToday != 0)
+            {
+                user.PagesReadToday += (int)pagesRead;
+            }
+            else
+            {
+                user.PagesReadToday = (int)pagesRead;
+                user.LastUpdate = today;
+            }
+
+           
+
+            // check if the user has read more than 30 pages today and set the streak
+            if (user.PagesReadToday >= 30 )
+            {
+                DateTime yesterday = today.AddDays(-1);
+
+                if (sameDate(yesterday, user.LastStreakDay))
+                {
+                    user.LastStreakDay = today;
+                    user.Streak++;
+                }
+                else
+                {
+                    user.LastStreakDay = today;
+                    user.Streak = 1;
+                }  
+            }
+            
+
+
+
+            return RedirectToAction("Show", "Shelves", new { shelfId = oldBookOnShelf.ShelfId });
+        }
+
+
         private ApplicationUser getUserById(string id)
         {
-            return database.Users.Find(id); 
+            return database.Users
+                 .Include(u => u.Followers)
+                 .Include(u => u.Following)
+                .FirstOrDefault(u => u.Id == id); 
         }
 
         private IEnumerable<ApplicationUser> getAllUsers()
@@ -289,5 +488,93 @@ namespace Codex.Controllers
             user.Badges = badges;
         }
       
+        private double? readingChallengeProgress(ApplicationUser user)
+        {
+          if(user.HasJoinedChallenge(new ReadingChallenge { StartDate = new DateOnly(DateTime.Now.Year, 1, 1), UserId = user.Id }))
+          {
+                // find the reading challenge 
+                var readingChallenge = database.ReadingChallenges
+                                            .Include(rc => rc.BooksRead)
+                                            .FirstOrDefault(rc => rc.UserId == user.Id
+                                                                && rc.StartDate.Year == DateTime.Now.Year);
+
+                ViewBag.ChallangeId = readingChallenge.ReadingChallengeId; 
+
+                 // find how many books the user wants to read 
+                 var targetBooks = readingChallenge.TargetNumber;
+
+                // find how many books the user has read
+                var booksRead = 0; 
+                if (readingChallenge.BooksRead != null)
+                {
+                    booksRead = readingChallenge.BooksRead.Count;
+                }
+
+                // calculate progress procentage
+                return Math.Round((double)booksRead / targetBooks * 100, 2);
+            }
+
+            // if the user hasn't joined the reading challenge then return null
+            return null; 
+        }
+
+        private void setAccessRights()
+        {
+            ViewBag.IsAdmin = User.IsInRole("Admin");
+            ViewBag.IsEditor = User.IsInRole("Editor");
+            ViewBag.IsUser = User.IsInRole("User");
+            ViewBag.CurrentUser = userManager.GetUserId(User);
+        }
+
+        private string getCurrentUserId()
+        {
+            return userManager.GetUserId(User); 
+        }
+
+        private bool isFollowing(ApplicationUser user1, ApplicationUser user2)
+        {
+            var followingList = user1.Following.ToList(); 
+
+            foreach(var user in followingList)
+            {
+                if(user2.Id == user.Id)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool isFollowedBy(ApplicationUser user1, ApplicationUser user2)
+        {
+            var followingList = user1.Followers.ToList();
+
+            foreach (var user in followingList)
+            {
+                if (user2.Id == user.Id)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private Book getBookById(int id)
+        {
+            Book book = database.Books
+                .FirstOrDefault(book => book.BookId == id);
+            return book;
+        }
+
+        private bool sameDate(DateTime date1, DateTime date2)
+        {
+            if(date1 == date2) return true;
+
+            if(date1.Year == date2.Year)
+                if(date1.Month == date2.Month)
+                    if(date1.Day == date2.Day)
+                        return true;
+
+            return false; 
+        }
+       
     }
 }

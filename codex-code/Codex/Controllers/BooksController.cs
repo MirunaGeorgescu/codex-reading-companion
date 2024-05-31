@@ -12,6 +12,7 @@ using Microsoft.Identity.Client;
 using System;
 using System.Diagnostics.Metrics;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
+using Ganss.Xss;
 
 namespace Codex.Controllers
 {
@@ -201,11 +202,18 @@ namespace Codex.Controllers
             // if the owner of the shelf has already added that book on one
             // of the shelves, then delete the entry in the table 
             var alreadyOnShelfId = bookAlreadyOnShelf(bookId, shelfId);
+            Shelf? oldShelf = null; 
+
 
             if (alreadyOnShelfId != -1)
             {
                 var book = database.BooksOnShelves
                     .FirstOrDefault(bos => bos.ShelfId == alreadyOnShelfId && bos.BookId == bookId);
+
+                // store the shelf in order to check between which shelves the books are moving
+                oldShelf = database.Shelves
+                             .Include(s => s.User)
+                             .FirstOrDefault(s => s.ShelfId == alreadyOnShelfId);
 
                 database.BooksOnShelves.Remove(book);
             }
@@ -216,6 +224,40 @@ namespace Codex.Controllers
                 ShelfId = shelfId
             };
 
+
+            var newShelf = database.Shelves
+                     .Include(s => s.User)
+                     .FirstOrDefault(s => s.ShelfId == bookOnShelf.ShelfId);
+
+            var user = newShelf.User;
+            var userId = user.Id;
+            user = database.Users
+                 .Include(u => u.ReadingChallenges)
+                 .FirstOrDefault(u => u.Id == userId);
+
+            // check if the user is part of the reading challenge 
+            if (user.HasJoinedChallenge(new ReadingChallenge { StartDate = new DateOnly(DateTime.Now.Year, 1, 1), UserId = user.Id }))
+           {
+                // book is getting moved from a shelf to another
+                if (oldShelf != null)
+                {
+                    // if its getting moved from currently reading to read
+                    if (oldShelf.Name == "Currently reading" && newShelf.Name == "Read")
+                    {
+                        var book = getBookById(bookId);
+
+                        userReadBook(user, book);
+                    }
+
+                    // if the book gets removed from read it gets deleted from that years reading challange if it was there
+                    if(oldShelf.Name == "Read")
+                    {
+                        var book = getBookById(bookId);
+                        removeBookFromReadingChallenge(user, book);
+                    }
+                }
+           }
+
             database.BooksOnShelves.Add(bookOnShelf);
             database.SaveChanges();
 
@@ -223,7 +265,7 @@ namespace Codex.Controllers
 
 
             // check if the user can get a new badge
-            var user = getUserByShelfId(shelfId); 
+            user = getUserByShelfId(shelfId); 
 
             if (user != null)
             {
@@ -586,6 +628,51 @@ namespace Codex.Controllers
                 .FirstOrDefault();
 
             return shelf.User; 
+        }
+
+        private void userReadBook(ApplicationUser user, Book book)
+        {
+           var userId = user.Id;
+           user = database.Users
+                .Include(u => u.ReadingChallenges)
+                .FirstOrDefault(u => u.Id == userId);
+
+            var readingChallenge = user.ReadingChallenges
+                                        .FirstOrDefault(rc => rc.StartDate.Year == DateTime.Now.Year 
+                                           && rc.UserId == userId);
+
+            if(readingChallenge.BooksRead == null)
+            {
+                readingChallenge.BooksRead = new List<Book>();
+            }
+
+            readingChallenge.BooksRead.Add(book);
+
+            database.SaveChanges();
+        }
+
+        private void removeBookFromReadingChallenge(ApplicationUser user, Book book)
+        {
+            var userId = user.Id;
+            user = database.Users
+                 .Include(u => u.ReadingChallenges)
+                 .FirstOrDefault(u => u.Id == userId);
+
+            var readingChallenge = user.ReadingChallenges
+                                        .FirstOrDefault(rc => rc.StartDate.Year == DateTime.Now.Year
+                                           && rc.UserId == userId);
+
+            if (readingChallenge.BooksRead != null)
+            {
+                var bookToRemove = readingChallenge.BooksRead
+                                       .FirstOrDefault(b => b.BookId == book.BookId);
+
+                if (bookToRemove != null)
+                {
+                    readingChallenge.BooksRead.Remove(bookToRemove);
+                    database.SaveChanges();
+                }
+            }
         }
     }
 }

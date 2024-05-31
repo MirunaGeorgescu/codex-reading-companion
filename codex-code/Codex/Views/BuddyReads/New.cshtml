@@ -1,0 +1,31 @@
+﻿@model BuddyRead
+
+<h1>Create a new Buddy Read!</h1>
+<br />
+
+<form asp-action="New" method="post">
+    <div class="form-group">
+        <label for="bookId"> Select the book you want to read together: </label>
+        <select class="form-control" id="BookId" name="BookId" asp-for="BookId">
+            <option value="">Select a book</option>
+            @foreach (var book in ViewBag.Books)
+            {
+                <option value="@book.BookId">@book.Title</option>
+            }
+        </select>
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label>Select Friends:</label>
+        <select class="form-control" multiple id="participantIds" name="ParticipantIds[]">
+            @foreach (var friend in ViewBag.Friends)
+            {
+                <option value="@friend.Id">@friend.Name</option>
+            }
+        </select>
+    </div>
+
+    <br/> 
+    <button type="submit" class="btn btn-outline-secondary">Create Buddy Read</button>
+</form>

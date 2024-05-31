@@ -1,0 +1,21 @@
+﻿@model Codex.Models.ReadingChallenge
+
+<h2>Edit your goal!</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form method="post" action="/readingchallenges/edit/@Model.ReadingChallengeId">
+    <input type="hidden" asp-for="ReadingChallengeId" />
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="StartDate" />
+    <input type="hidden" asp-for="EndDate" />
+
+    <div class="form-group">
+        <label asp-for="TargetNumber">How many books do you want to read this year?</label>
+        <input asp-for="TargetNumber" type="text" class="form-control" value ="@Model.TargetNumber"/>
+        @Html.ValidationMessageFor(m => m.TargetNumber, "The target number of books is required!", new { @class = "text-danger" })
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-outline-secondary"> Update!</button>
+</form>

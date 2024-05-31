@@ -17,6 +17,16 @@ namespace Codex.Models
         public virtual ICollection<BadgeEarned>? BadgesEarned { get; set; }
         public virtual ICollection<Shelf>? Shelves{ get; set; }
         public virtual ICollection<ReadingBadge>? Badges {  get; set; }
+        public virtual ICollection<ReadingChallenge>? ReadingChallenges { get; set; }
+        public virtual ICollection<ApplicationUser>? Followers { get; set; }
+        public virtual ICollection<ApplicationUser>? Following { get; set; }
+        public virtual ICollection<BuddyReadParticipant>? BuddyReadParticipations { get; set; }
+
+        // streaks
+        public int? Streak { get; set; }
+        public DateTime LastStreakDay { get; set; }
+        public int PagesReadToday { get; set; }
+        public DateTime LastUpdate { get; set; }
 
 
         [NotMapped]
@@ -31,9 +41,18 @@ namespace Codex.Models
         [NotMapped]
         public IEnumerable<SelectListItem>? ShelvesOptions { get; set; }
 
+
         public void UseDefaultProfilePictureUrl()
         {
             ProfilePhoto = DefaultProfilePictureUrl;
         }
+
+        public bool HasJoinedChallenge(ReadingChallenge readingChallenge)
+        {
+            return ReadingChallenges != null
+                && ReadingChallenges.Any(c => c.StartDate.Year == readingChallenge.StartDate.Year
+                                            && c.UserId == readingChallenge.UserId);
+        }
+
     }
 }

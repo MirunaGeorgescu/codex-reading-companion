@@ -26,17 +26,23 @@ namespace Codex.Controllers
         {
             // get name of the shelf in case the shelfToShow has no books 
             var shelf = getShelfById(shelfId);
-            
+
 
             var shelfToShow = database.Shelves
-                                .Include(s => s.BooksOnShelves)
-                                .ThenInclude(bos => bos.Book)
-                                .FirstOrDefault(s => s.ShelfId == shelfId);
+                               .Include(s => s.User)
+                               .Include(s => s.BooksOnShelves)
+                                    .ThenInclude(bos => bos.Book)
+                               .FirstOrDefault(s => s.ShelfId == shelfId);
 
+
+            // setting the current user 
+            var currUserId = getCurrentUserId();
+            var currentUser = getUserById(currUserId);
+
+            ViewBag.CurrentUser = currentUser;
 
             return View(shelfToShow);
         }
-
 
         private Shelf getShelfById(int shelfId)
         {
@@ -48,6 +54,17 @@ namespace Codex.Controllers
             ViewBag.IsEditor = User.IsInRole("Editor");
             ViewBag.IsUser = User.IsInRole("User");
             ViewBag.CurrentUser = userManager.GetUserId(User);
+        }
+        private string getCurrentUserId()
+        {
+            return userManager.GetUserId(User);
+        }
+        private ApplicationUser getUserById(string id)
+        {
+            return database.Users
+                 .Include(u => u.Followers)
+                 .Include(u => u.Following)
+                .FirstOrDefault(u => u.Id == id);
         }
     }
 }

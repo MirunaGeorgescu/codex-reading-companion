@@ -1,10 +1,77 @@
 ﻿@model Codex.Models.ApplicationUser
 
+
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-info" role="alert">
+        @TempData["message"]
+    </div>
+}
+
 <div class="card">
     <div class="row no-gutters">
-        @*display profile picture*@
+
         <div class="col-md-4">
-            <img src="@Model.ProfilePhoto" class="card-img" style="width: 150px; height: 150px;" alt="Profile Picture">
+            <div class="d-flex flex-column align-items-center">
+                @*display profile picture*@
+                <br />
+                <img src="@Model.ProfilePhoto" class="card-img mb-2" style="width: 150px; height: 150px;" alt="Profile Picture">
+                <br/>
+
+                @*follow/ following count*@
+                <div style="display: flex;">
+                    <span style="margin-left: 10px;">@Model.Followers.Count()</span>
+                    <span style="margin-left: 70px;">@Model.Following.Count()</span>
+                </div>
+
+                <div style="display: flex;">
+                    <span>followers</span>
+                    <span style="margin-left: 20px;">following</span>
+                </div>
+
+
+                @if ((Model.LastStreakDay.Year == ViewBag.today.Year
+                && Model.LastStreakDay.Month == ViewBag.today.Month
+                && Model.LastStreakDay.Day == ViewBag.today.Day) || (Model.LastStreakDay.Year == ViewBag.yesterday.Year
+                && Model.LastStreakDay.Month == ViewBag.yesterday.Month
+                && Model.LastStreakDay.Day == ViewBag.yesterday.Day))
+                {
+
+                    <div class="mt-3">
+                        <p>@Model.Streak <i class="bi bi-fire"></i></p>
+                    </div>
+                 
+                }
+               
+                <br />
+
+
+                @*Reading Challenge*@
+                @if (!Model.HasJoinedChallenge(new ReadingChallenge { StartDate = new DateOnly(DateTime.Now.Year, 1, 1), UserId = Model.Id }))
+                {
+                    <a href="@Url.Action("New", "ReadingChallenges", new { userId = Model.Id })" class="btn btn-outline-secondary">Join Reading Challenge</a>
+                }
+                else
+                {
+                    @if (ViewBag.ChallengeProgress != null)
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <a href="@Url.Action("Show", "ReadingChallenges", new { id = ViewBag.ChallangeId })" style="text-decoration: none; color: inherit;">
+                                    <h5 class="card-title">@ViewBag.Year Reading Challange Reading Challenge</h5>
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: @(ViewBag.ChallengeProgress)%;" aria-valuenow="@ViewBag.ChallengeProgress" aria-valuemin="0" aria-valuemax="100">
+                                        @(ViewBag.ChallengeProgress)% 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
         </div>
 
         @*display info*@
@@ -33,7 +100,7 @@
                     </div>
 
                     @*if the user has set any favorite books then we display them*@
-                    @if (Model.FavoriteBooks != null)
+                    @if (Model.FavoriteBooks != null && Model.FavoriteBooks.Any())
                     {
                         <h5>@Model.Name's Favorite Books</h5>
 
@@ -91,7 +158,7 @@
                 <br />
 
                 @*if the user has badges then we display them*@
-                @if(Model.BadgesEarned != null)
+                @if(Model.BadgesEarned != null && Model.BadgesEarned.Any())
                 {
                     <h5>@Model.Name's Badges</h5>
 

@@ -23,7 +23,7 @@
     <br />
     <br />
     @*let the user select their favorite books they want to display*@
-    @if (Model.FavoriteBooksOptions != null)
+    @if (Model.FavoriteBooksOptions != null && Model.FavoriteBooksOptions.Any())
     {
         <h4>Select Your Favorite Books</h4>
         <div>
