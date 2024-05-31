@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Net;
 
 namespace Codex.Controllers
@@ -57,17 +58,17 @@ namespace Codex.Controllers
             setChallangeDates(ref newReadingChallenge);
 
             // check to see if user hasnt joined the reading challenge yet 
-            if(!user.HasJoinedChallenge(newReadingChallenge))
+            if (!user.HasJoinedChallenge(newReadingChallenge))
             {
-                ViewBag.UserName = user.Name; 
-                return View(newReadingChallenge); 
+                ViewBag.UserName = user.Name;
+                return View(newReadingChallenge);
             }
             else
             {
                 TempData["message"] = "You have already joined the reading challenge this year!";
                 return RedirectToAction("Profile", "Users", new { id = userId });
             }
-           
+
         }
 
         [HttpPost]
@@ -77,7 +78,7 @@ namespace Codex.Controllers
 
             try
             {
-                if(ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     // add challange to database 
                     database.Add(newReadingChallenge);
@@ -91,14 +92,14 @@ namespace Codex.Controllers
                 {
 
                     var user = getUserById(userId);
-                    ViewBag.UserName = user.Name; 
-                    return View(newReadingChallenge); 
+                    ViewBag.UserName = user.Name;
+                    return View(newReadingChallenge);
                 }
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "An error occurred while saving the reading challenge: " + ex.Message);
-                
+
                 return View(newReadingChallenge);
             }
         }
@@ -106,7 +107,7 @@ namespace Codex.Controllers
         public IActionResult Edit(int id)
         {
             var readingChallenge = getReadingChallengeById(id);
-            return View(readingChallenge); 
+            return View(readingChallenge);
         }
 
         [HttpPost]
@@ -116,11 +117,11 @@ namespace Codex.Controllers
 
             try
             {
-                if(ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     existingReadingChallenge.TargetNumber = updatedReadingChallenge.TargetNumber;
                     database.SaveChanges();
-                    return RedirectToAction("Show", "ReadingChallenges", new { id = id});
+                    return RedirectToAction("Show", "ReadingChallenges", new { id = id });
 
                 }
                 else
@@ -129,7 +130,7 @@ namespace Codex.Controllers
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError("", "An error occurred while saving the reading challenge: " + ex.Message);
 
@@ -148,9 +149,45 @@ namespace Codex.Controllers
             database.ReadingChallenges.Remove(readingChallenge);
             database.SaveChanges();
 
-            TempData["message"] = "You've deleted this year's reading challenge!"; 
+            TempData["message"] = "You've deleted this year's reading challenge!";
 
-            return RedirectToAction("Profile", "Users", new { id = userId }); 
+            return RedirectToAction("Profile", "Users", new { id = userId });
+        }
+
+        public IActionResult YearlyRecap(string userId)
+        {
+            var user = getUserById(userId);
+
+            var readingChallange = database.ReadingChallenges
+                                    .Include(rc => rc.BooksRead)
+                                    .Include(rc => rc.User)
+                                    .FirstOrDefault(rc => rc.UserId == userId && rc.EndDate.Year == DateTime.Now.Year);
+
+            if (readingChallange == null)
+            {
+                return View(null);
+            }
+
+            // get some statisitics
+            var averageRating = GetAverageRating(readingChallange);
+            var totalBooksRead = readingChallange.BooksRead.Count;
+            var longestBookRead = GetLongestBook(readingChallange);
+            var shortestBookRead = GetShortestBook(readingChallange);
+            var totalNumberOfPages = GetTotalNumberOfPages(readingChallange);
+            var averageNumberOfPagesRead = totalBooksRead == 0 ? 0 : totalNumberOfPages / totalBooksRead;
+            var highestRatedBookRead = GetHighestRatedBookRead(readingChallange);
+
+            // add them to viewbag for easy access 
+            ViewBag.AverageRating = averageRating;
+            ViewBag.TotalBooksRead = totalBooksRead;
+            ViewBag.LongestBookRead = longestBookRead;
+            ViewBag.ShortestBookRead = shortestBookRead;
+            ViewBag.TotalNumberOfPages = totalNumberOfPages;
+            ViewBag.AverageNumberOfPagesRead = averageNumberOfPagesRead;
+            ViewBag.HighestRatedBookRead = highestRatedBookRead;
+
+
+            return View(readingChallange);
         }
 
         private ApplicationUser getUserById(string id)
@@ -158,7 +195,8 @@ namespace Codex.Controllers
             return database.Users.Find(id);
         }
 
-        private void setChallangeDates(ref ReadingChallenge readingChallenge) {
+        private void setChallangeDates(ref ReadingChallenge readingChallenge)
+        {
             // get the current date 
             DateTime currentDate = DateTime.Now.Date;
             var currentYear = currentDate.Year;
@@ -167,14 +205,15 @@ namespace Codex.Controllers
             readingChallenge.StartDate = new DateOnly(currentYear, 1, 1);
 
             // set the end date of the challange to december 31st 
-            readingChallenge.EndDate = new DateOnly(currentYear, 12, 31); 
+            readingChallenge.EndDate = new DateOnly(currentYear, 12, 31);
         }
 
-        private ReadingChallenge getReadingChallengeById(int id) {
+        private ReadingChallenge getReadingChallengeById(int id)
+        {
             return database.ReadingChallenges
                 .Include(rc => rc.User)
                 .Include(rc => rc.BooksRead)
-                .FirstOrDefault(rc => rc.ReadingChallengeId == id); 
+                .FirstOrDefault(rc => rc.ReadingChallengeId == id);
         }
 
         private double? readingChallengeProgress(ApplicationUser user)
@@ -203,6 +242,38 @@ namespace Codex.Controllers
             // if the user hasn't joined the reading challenge then return null
             return null;
         }
+
+        
+
+        private double GetAverageRating(ReadingChallenge readingChallenge)
+        {
+            if (readingChallenge.BooksRead == null || readingChallenge.BooksRead.Count == 0)
+                return 0;
+
+            var ratings = readingChallenge.BooksRead.Sum(book => (int)book.Rating);
+            return (double)ratings / readingChallenge.BooksRead.Count;
+        }
+
+        private Book GetLongestBook(ReadingChallenge readingChallenge)
+        {
+            return readingChallenge.BooksRead?.OrderByDescending(book => book.NumberOfPages).FirstOrDefault();
+        }
+
+        private Book GetShortestBook(ReadingChallenge readingChallenge)
+        {
+            return readingChallenge.BooksRead?.OrderBy(book => book.NumberOfPages).FirstOrDefault();
+        }
+
+        private int GetTotalNumberOfPages(ReadingChallenge readingChallenge)
+        {
+            return readingChallenge.BooksRead?.Sum(book => book.NumberOfPages) ?? 0;
+        }
+
+        private Book GetHighestRatedBookRead(ReadingChallenge readingChallenge)
+        {
+            return readingChallenge.BooksRead?.OrderByDescending(book => book.Rating).FirstOrDefault();
+        }
+
     }
 }
 

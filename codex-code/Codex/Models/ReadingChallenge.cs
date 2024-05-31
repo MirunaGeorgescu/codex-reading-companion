@@ -17,6 +17,10 @@ namespace Codex.Models
         [Required(ErrorMessage ="The target number of books is required!")]
         public int TargetNumber { get; set; }
 
-        public virtual ICollection<Book>? BooksRead { get; set; }    
+        public virtual ICollection<Book>? BooksRead { get; set; }
+
+        public int GetTotalBooksRead() => BooksRead?.Count ?? 0;
+
+       
     }
 }
