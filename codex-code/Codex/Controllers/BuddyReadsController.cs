@@ -103,8 +103,9 @@ namespace Codex.Controllers
         {
             var buddyRead = GetBuddyReadById(id);
 
-            if(buddyRead != null)
+            if (buddyRead != null)
             {
+                // find the users progress 
                 var buddyReadParticipants = database.BuddyReadsParticipants
                                       .Where(brp => brp.BuddyReadId == id)
                                       .Include(brp => brp.User)
@@ -120,7 +121,6 @@ namespace Codex.Controllers
 
                 participantProgressList.Add(progress);
 
-
                 foreach (var participant in buddyReadParticipants)
                 {
                     if (participant.UserId != currentUserId)
@@ -130,15 +130,17 @@ namespace Codex.Controllers
 
                         participantProgressList.Add(progress);
                     }
-
                 }
 
                 ViewBag.ProgressList = participantProgressList;
                 ViewBag.ProgressListLenth = participantProgressList.Count;
+
             }
 
             return View(buddyRead);
         }
+
+
 
         public IActionResult Delete(int id)
         {
@@ -160,6 +162,7 @@ namespace Codex.Controllers
                         .Include(br => br.Participants)
                             .ThenInclude(p => p.User)
                             .ThenInclude(p => p.Shelves)
+                         .Include(br => br.Annotations)
                         .FirstOrDefault(br => br.BuddyReadId == id);
         }
 

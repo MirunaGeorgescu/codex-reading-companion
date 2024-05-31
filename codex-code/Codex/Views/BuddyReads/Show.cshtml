@@ -60,9 +60,43 @@ else
                     </div>
                 }
             }
-            <a class="btn btn-outline-secondary" href="@Url.Action("New", "Annotations", new { buddyReadId = Model.BuddyReadId })">
-                <i class="bi bi-plus-circle"></i>
-            </a>
+            
+
+            <div class="annotations-section">
+                <h3>Annotations</h3>
+                <a class="btn btn-outline-secondary" href="@Url.Action("New", "Annotations", new { buddyReadId = Model.BuddyReadId })">
+                    <i class="bi bi-plus-circle"></i>
+                </a>
+                
+
+                @if (Model.Annotations != null && Model.Annotations.Count > 0)
+                {
+                    <ul class="list-group">
+                        @foreach (var annotation in Model.Annotations)
+                        {
+                            <br />
+                            if (annotation.Page <= progressList[0].CurrentPage)
+                            {
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        @annotation.User.UserName
+                                    </div>
+                                    <div class="card-body">
+                                        <p>@annotation.Comment</p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <small>Page: @annotation.Page | @annotation.TimeStamp.ToString("g")</small>
+                                    </div>
+                                </div>
+
+                                <br />
+                            }
+                        }
+                    </ul>
+                }
+               
+            </div>
         </div>
     </div>
 }
