@@ -382,11 +382,19 @@ namespace Codex.Controllers
                 {
                     user.LastStreakDay = today;
                     user.Streak = 1;
-                }  
+                }
             }
-            
 
+            // add the progress to the friends quest too, if the user is part of one 
+            var currentFriendsQuest = database.FriendsQuests
+                                        .FirstOrDefault(fq => (fq.UserId1 == userId || fq.UserId2 == userId)
+                                                                   && fq.EndDate > DateTime.Now);
 
+            if(currentFriendsQuest != null)
+            {
+                currentFriendsQuest.PagesRead += (int)pagesRead; 
+                database.SaveChanges();
+            }
 
             return RedirectToAction("Show", "Shelves", new { shelfId = oldBookOnShelf.ShelfId });
         }
