@@ -46,7 +46,7 @@
                 <br />
 
 
-                @*Reading Challenge*@
+                @* Reading Challenge *@
                 @if (!Model.HasJoinedChallenge(new ReadingChallenge { StartDate = new DateOnly(DateTime.Now.Year, 1, 1), UserId = Model.Id }))
                 {
                     <a href="@Url.Action("New", "ReadingChallenges", new { userId = Model.Id })" class="btn btn-outline-secondary">Join Reading Challenge</a>
@@ -55,21 +55,43 @@
                 {
                     @if (ViewBag.ChallengeProgress != null)
                     {
-                        <div class="card">
+                        <div class="card w-100 mb-3">
                             <div class="card-header">
                                 <a href="@Url.Action("Show", "ReadingChallenges", new { id = ViewBag.ChallangeId })" style="text-decoration: none; color: inherit;">
-                                    <h5 class="card-title">@ViewBag.Year Reading Challange Reading Challenge</h5>
+                                    <h5 class="card-title">@ViewBag.Year Reading Challenge</h5>
                                 </a>
                             </div>
                             <div class="card-body">
                                 <div class="progress">
                                     <div class="progress-bar" role="progressbar" style="width: @(ViewBag.ChallengeProgress)%;" aria-valuenow="@ViewBag.ChallengeProgress" aria-valuemin="0" aria-valuemax="100">
-                                        @(ViewBag.ChallengeProgress)% 
+                                        @(ViewBag.ChallengeProgress)%
                                     </div>
                                 </div>
                             </div>
                         </div>
                     }
+                }
+                <br />
+
+                @* Friends Quest *@
+                @if (ViewBag.IsInFriendsQuest)
+                {
+                    <div class="card w-100">
+                        <div class="card-header">
+                            <h5 class="card-title">Friends Quest with @ViewBag.FriendInQuest</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: @(ViewBag.FriendsQuestProgress)%;" aria-valuenow="@ViewBag.FriendsQuestProgress" aria-valuemin="0" aria-valuemax="100">
+                                    @(ViewBag.FriendsQuestProgress)%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a href="@Url.Action("New", "FriendsQuests")" class="btn btn-outline-secondary mt-3">Join a Friends Quest!</a>
                 }
             </div>
         </div>

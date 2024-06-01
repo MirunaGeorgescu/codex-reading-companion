@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NuGet.Protocol.Plugins;
 using System.Net;
 using System.Reflection.Metadata;
@@ -121,10 +122,13 @@ namespace Codex.Controllers
                .Include(u => u.ReadingChallenges)
                .Include(u => u.Followers)
                .Include(u => u.Following)
+               .Include(u => u.FriendsQuestsAsUser1)
+               .Include(u => u.FriendsQuestsAsUser2)
                .FirstOrDefault(u => u.Id == id);
 
             populateBadges(ref user);
 
+            // READING CHALLANGE
             // calculate the progress in the reading challenge 
             var challengeProgress = readingChallengeProgress(user);
 
@@ -136,6 +140,39 @@ namespace Codex.Controllers
 
             ViewBag.today = DateTime.Now;
             ViewBag.yesterday = DateTime.Now.AddDays(-1);
+
+            // FRIENDS QUEST
+            // find if user is in a friends quest 
+            var currentFriendsQuest = database.FriendsQuests
+                                         .FirstOrDefault(fq => (fq.UserId1 == id || fq.UserId2 == id)
+                                                                    && fq.EndDate > DateTime.Now);
+            if(currentFriendsQuest !=  null)
+            {
+                ViewBag.IsInFriendsQuest = true;
+
+                var progress = (double)currentFriendsQuest.PagesRead / currentFriendsQuest.TargetPages * 100;
+                ViewBag.FriendsQuestProgress = Math.Min(progress, 100);
+
+                // find the other user
+                var user1 = currentFriendsQuest.User1;
+                var user2 = currentFriendsQuest.User2;
+
+                // if the current user is user1 then the other friend in the quest is user 2
+                if(user1.Id == id)
+                {
+                    ViewBag.FriendInQuest = user2.Name;
+                }
+                else
+                {
+                    ViewBag.FriendInQuest = user1.Name;
+                }
+                
+
+
+            }
+            else
+                ViewBag.IsInFriendsQuest = false;
+
             return View(user);
         }
 
