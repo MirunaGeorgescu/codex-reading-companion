@@ -25,6 +25,7 @@ namespace Codex.Data
         public DbSet<BuddyRead> BuddyReads { get; set; }
         public DbSet<Annotation> Annotations { get; set; }
         public DbSet<BuddyReadParticipant> BuddyReadsParticipants { get; set; }
+        public DbSet<FriendsQuest> FriendsQuests { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -79,6 +80,19 @@ namespace Codex.Data
                 .HasOne(brp => brp.User)
                 .WithMany(u => u.BuddyReadParticipations)
                 .HasForeignKey(brp => brp.UserId);
+
+            // FRIENDS QUEST - one user to many friends quests 
+            modelBuilder.Entity<FriendsQuest>()
+                .HasOne(fq => fq.User1)
+                .WithMany(u => u.FriendsQuestsAsUser1)
+                .HasForeignKey(fq => fq.UserId1)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FriendsQuest>()
+                .HasOne(fq => fq.User2)
+                .WithMany(u => u.FriendsQuestsAsUser2)
+                .HasForeignKey(fq => fq.UserId2)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
 
