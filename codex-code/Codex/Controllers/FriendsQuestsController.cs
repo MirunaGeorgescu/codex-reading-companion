@@ -54,7 +54,14 @@ namespace Codex.Controllers
                                      .ToList();
 
             // trun it into a select list 
-            ViewBag.AvailableFriends = new SelectList(availableFriends, "Id", "Name");
+            if(availableFriends.Any())
+            {
+                ViewBag.AvailableFriends = new SelectList(availableFriends, "Id", "Name");
+            }
+            else
+            {
+                ViewBag.AvailableFriends = null;
+            }
             return View(friendsQuest);  
 
         }

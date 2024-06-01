@@ -1,15 +1,22 @@
 ﻿@model Codex.Models.FriendsQuest
 
-<h2>New Friends Quest</h2>
+@if (ViewBag.AvailableFriends == null)
+{
+    <p>There are no friends available for a friends quest right now</p>
+}
+else
+{
+    <h2>New Friends Quest</h2>
 
-<form asp-action="New">
-    <input type="hidden" asp-for="UserId1" />
+    <form asp-action="New">
+        <input type="hidden" asp-for="UserId1" />
 
-    @*selecting a friend for the quest*@
-    <div class="form-group">
-        <label for="UserId2">Select a Friend:</label>
-        <select id="UserId2" name="UserId2" class="form-control" asp-items="@ViewBag.AvailableFriends"></select>
-    </div>
-    <br/>
-    <button type="submit" class="btn btn-outline-secondary">Start the Quest!</button>
-</form>
+        @*selecting a friend for the quest*@
+        <div class="form-group">
+            <label for="UserId2">Select a Friend:</label>
+            <select id="UserId2" name="UserId2" class="form-control" asp-items="@ViewBag.AvailableFriends"></select>
+        </div>
+        <br />
+        <button type="submit" class="btn btn-outline-secondary">Start the Quest!</button>
+    </form>
+}
