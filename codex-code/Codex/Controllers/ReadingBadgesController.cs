@@ -1,6 +1,7 @@
 ﻿using Codex.Data;
 using Codex.Enums;
 using Codex.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,6 +9,7 @@ using System.Linq;
 
 namespace Codex.Controllers
 {
+    [Authorize(Roles = "Editor,Admin")]
     public class ReadingBadgesController : Controller
     {
         private readonly ApplicationDbContext database;
@@ -33,6 +35,7 @@ namespace Codex.Controllers
         }
 
         // display form for adding a new reading badge 
+        [Authorize(Roles = "Admin")]
         public IActionResult New()
         {
             // populate the options for the reading badge types 
@@ -45,6 +48,7 @@ namespace Codex.Controllers
         }
 
         // add the new badge to the database
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult New(ReadingBadge newReadingBadge)
         {
@@ -122,6 +126,7 @@ namespace Codex.Controllers
             }
         }
 
+        [Authorize(Roles = "Editor,Admin")]
         [HttpPost]
         public IActionResult Delete(int id)
         {
@@ -139,6 +144,7 @@ namespace Codex.Controllers
 
         }
 
+        [Authorize(Roles = "Editor,Admin")]
         public IActionResult Edit(int id)
         {
             // find badge by id
@@ -151,6 +157,7 @@ namespace Codex.Controllers
             return View(readingBadge);
         }
 
+        [Authorize(Roles = "Editor,Admin")]
         [HttpPost]
         public IActionResult Edit(int id, ReadingBadge newReadingBadge)
         {
