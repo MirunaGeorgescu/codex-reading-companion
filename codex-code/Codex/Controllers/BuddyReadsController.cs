@@ -226,7 +226,7 @@ namespace Codex.Controllers
         public class ParticipantProgress
         {
             public string Id { get; set; }
-            public string UserName { get; set; }
+            public string Name { get; set; }
             public int CurrentPage { get; set; }
         }
 
@@ -242,7 +242,7 @@ namespace Codex.Controllers
             var progress = new ParticipantProgress
             {
                 Id = user.Id, 
-                UserName = user.Name,
+                Name = user.Name,
                 CurrentPage = (int)usersCurrentPage
             };
 
