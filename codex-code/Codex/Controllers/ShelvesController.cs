@@ -1,5 +1,6 @@
 ﻿using Codex.Data;
 using Codex.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace Codex.Controllers
             roleManager = _roleManager;
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult Show(int shelfId)
         {
             // get name of the shelf in case the shelfToShow has no books 
