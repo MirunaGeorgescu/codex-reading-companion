@@ -1,0 +1,102 @@
+﻿@model Codex.Models.ReadingChallenge
+
+@if (Model == null)
+{
+    <p>No reading challenge was found for this year :(</p>
+}
+else
+{
+    <div class="container">
+        <h1 class="text-center mt-4">Your Yearly Recap</h1>
+        <h2 class="text-center mb-4">@Model.EndDate.Year</h2>
+
+        <br/>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="text-center">
+                    <h3>Pages Read</h3>
+                    <h4>@ViewBag.TotalNumberOfPages</h4>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="text-center">
+                    <h3>Books Read</h3>
+                    <h4>@ViewBag.TotalBooksRead</h4>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        <div class="row mb-4">
+            <div class="col-md-4 offset-md-4">
+                <div class="text-center">
+                    <img src="@Model.User.ProfilePhoto" class="img-fluid rounded-circle mb-2" style="width: 150px; height: 150px;" />
+                    <h4>@Model.User.Name</h4>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="text-center">
+                    <h3>Shortest Book Read</h3>
+                    <p>@ViewBag.ShortestBookRead.Title</p>
+                    <p>@ViewBag.ShortestBookRead.NumberOfPages pages</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="text-center">
+                    <h3>Longest Book Read</h3>
+                    <p>@ViewBag.LongestBookRead.Title</p>
+                    <p>@ViewBag.LongestBookRead.NumberOfPages pages</p>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        <div class="text-center mb-4">
+            <h3>Average Book Length in @Model.EndDate.Year</h3>
+            <h4>@ViewBag.AverageNumberOfPagesRead pages</h4>
+        </div>
+        <br />
+
+        <div class="text-center mb-4">
+            <h3>Average Rating</h3>
+            <h4>@ViewBag.AverageRating</h4>
+        </div>
+        <br />
+
+        <div class="row mb-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <h3>Highest rated book</h3>
+                    <br/>
+                    <img src="@ViewBag.HighestRatedBookRead.CoverImage" class="img-fluid mb-2" style="width: 150px; height: 200px;" />
+                    <h5>@ViewBag.HighestRatedBookRead.Title</h5>
+                    <h6>@ViewBag.HighestRatedBookRead.Author</h6>
+                    <h6>Rating: @ViewBag.HighestRatedBookRead.Rating</h6>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        <h3 class="text-center mb-4">All Books Read</h3>
+
+        <div class="row">
+            @foreach (var book in Model.BooksRead)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="@book.CoverImage" class="card-img-top" alt="@book.Title Cover Image" />
+                        <div class="card-body">
+                            <h5 class="card-title">@book.Title</h5>
+                            <p class="card-text">@book.Author</p>
+                            <p class="card-text">Rating: @book.Rating</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

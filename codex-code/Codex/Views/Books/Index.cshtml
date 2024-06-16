@@ -9,6 +9,13 @@
 <br />
 
     <div class="row">
+    @if (ViewBag.IsAdmin)
+    {
+        <div class="col-md-12 mb-4">
+            <a href="/Books/New" class="btn btn-outline-secondary">New Book</a>
+        </div>
+    }
+
         @foreach (var book in Model)
         {
             <div class="col-md-4 mb-4">

@@ -1,5 +1,6 @@
 ﻿using Codex.Data;
 using Codex.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace Codex.Controllers
             roleManager = _roleManager;
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult New(int buddyReadId)
         {
             // get the current users Id, the one leaving the annotation
@@ -34,6 +36,7 @@ namespace Codex.Controllers
             return View(annotation);
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpPost]
         public IActionResult New(int buddyReadId, Annotation annotation)
         {

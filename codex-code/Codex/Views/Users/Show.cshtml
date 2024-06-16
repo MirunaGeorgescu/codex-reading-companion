@@ -9,46 +9,46 @@
                 @*display profile picture*@
                 <img src="@Model.ProfilePhoto" class="card-img" style="width: 150px; height: 150px;" alt="Profile Picture">
 
-                
-
-                @if ((Model.LastStreakDay.Year == ViewBag.today.Year
-                && Model.LastStreakDay.Month == ViewBag.today.Month
-                && Model.LastStreakDay.Day == ViewBag.today.Day) || (Model.LastStreakDay.Year == ViewBag.yesterday.Year
-                && Model.LastStreakDay.Month == ViewBag.yesterday.Month
-                && Model.LastStreakDay.Day == ViewBag.yesterday.Day))
+                @if (Model.UserName != "admin@test.com" && Model.UserName != "editor@test.com" && Model.UserName != "user@test.com")
                 {
+                    @if ((Model.LastStreakDay.Year == ViewBag.today.Year
+                   && Model.LastStreakDay.Month == ViewBag.today.Month
+                   && Model.LastStreakDay.Day == ViewBag.today.Day) || (Model.LastStreakDay.Year == ViewBag.yesterday.Year
+                   && Model.LastStreakDay.Month == ViewBag.yesterday.Month
+                   && Model.LastStreakDay.Day == ViewBag.yesterday.Day))
+                    {
 
-                    <div class="mt-3">
-                        <p>@Model.Streak <i class="bi bi-fire"></i></p>
+                        <div class="mt-3">
+                            <p>@Model.Streak <i class="bi bi-fire"></i></p>
+                        </div>
+
+                    }
+
+                    @*Follower & Following Count*@
+                    <div style="display: flex;">
+                        <span style="margin-left: 5px;">@Model.Followers.Count()</span>
+                        <span style="margin-left: 70px;">@Model.Following.Count()</span>
                     </div>
 
+                    <div style="display: flex;">
+                        <span>followers</span>
+                        <span style="margin-left: 20px;">following</span>
+                    </div>
+
+                    <br />
+
+                    @*Follow/ unfollow button*@
+                    @if (ViewBag.IsFollowing)
+                    {
+                        <a class="btn btn-outline-secondary" href="@Url.Action("Unfollow", "Users", new { unfollowedUserId = Model.Id })">Unfollow</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-secondary" href="@Url.Action("Follow", "Users", new { followedUserId = Model.Id })">Follow</a>
+                    }
+
+
                 }
-
-                @*Follower & Following Count*@
-                <div style="display: flex;">
-                    <span style="margin-left: 5px;">@Model.Followers.Count()</span>
-                    <span style="margin-left: 70px;">@Model.Following.Count()</span>
-                </div>
-
-                <div style="display: flex;">
-                    <span>followers</span>
-                    <span style="margin-left: 20px;">following</span>
-                </div>
-
-                <br />
-
-                @*Follow/ unfollow button*@
-                @if (ViewBag.IsFollowing)
-                {
-                    <a class="btn btn-outline-secondary" href="@Url.Action("Unfollow", "Users", new { unfollowedUserId = Model.Id })">Following</a>
-                }
-                else
-                {
-                    <a class="btn btn-outline-secondary" href="@Url.Action("Follow", "Users", new { followedUserId = Model.Id })">Follow</a>
-                }
-
-
-              
 
             </div>
            </div>
@@ -59,100 +59,106 @@
                 <h5 class="card-title">@Model.Name</h5>
                 <p class="card-text">Email: @Model.Email</p>
 
-                @*if the user has set any favorite books then we display them*@
-                @if (Model.FavoriteBooks != null)
+                @if (Model.UserName != "admin@test.com" && Model.UserName != "editor@test.com" && Model.UserName != "user@test.com")
                 {
-                    <h5>@Model.Name's Favorite Books</h5>
+                    @*if the user has set any favorite books then we display them*@
+                    @if (Model.FavoriteBooks != null)
+                    {
+                        <h5>@Model.Name's Favorite Books</h5>
 
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-md-8">
-                                @*display books in carousel*@
-                                <div id="favoriteBooksCarousel" class="carousel slide" data-ride="carousel" style="max-width: 230px; height: auto;">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    @*display books in carousel*@
+                                    <div id="favoriteBooksCarousel" class="carousel slide" data-ride="carousel" style="max-width: 230px; height: auto;">
 
-                                    @*display the book cover on the slide and the title and author in the caption*@
-                                    <div class="carousel-inner">
-                                        @foreach (var favoriteBook in Model.FavoriteBooks)
-                                        {
-                                            @*first item is set to active (it should be displaied initially)*@
-                                            @if (favoriteBook.BookId == Model.FavoriteBooks.First().BookId)
+                                        @*display the book cover on the slide and the title and author in the caption*@
+                                        <div class="carousel-inner">
+                                            @foreach (var favoriteBook in Model.FavoriteBooks)
                                             {
-                                                <div class="carousel-item active">
-                                                    <img src="@favoriteBook.CoverImage" class="d-block w-100" alt="@favoriteBook.Title cover image" />
-                                                    <div class="carousel-caption dd-none d-md-block">
-                                                        <h5>@favoriteBook.Title</h5>
-                                                        <p>by @favoriteBook.Author</p>
+                                                @*first item is set to active (it should be displaied initially)*@
+                                                @if (favoriteBook.BookId == Model.FavoriteBooks.First().BookId)
+                                                {
+                                                    <div class="carousel-item active">
+                                                        <img src="@favoriteBook.CoverImage" class="d-block w-100" alt="@favoriteBook.Title cover image" />
+                                                        <div class="carousel-caption dd-none d-md-block">
+                                                            <h5>@favoriteBook.Title</h5>
+                                                            <p>by @favoriteBook.Author</p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class="carousel-item">
-                                                    <img src="@favoriteBook.CoverImage" class="d-block w-100" alt="@favoriteBook.Title cover image" />
-                                                    <div class="carousel-caption dd-none d-md-block">
-                                                        <h5>@favoriteBook.Title</h5>
-                                                        <p>by @favoriteBook.Author</p>
+                                                }
+                                                else
+                                                {
+                                                    <div class="carousel-item">
+                                                        <img src="@favoriteBook.CoverImage" class="d-block w-100" alt="@favoriteBook.Title cover image" />
+                                                        <div class="carousel-caption dd-none d-md-block">
+                                                            <h5>@favoriteBook.Title</h5>
+                                                            <p>by @favoriteBook.Author</p>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                }
                                             }
-                                        }
+                                        </div>
+
+                                        @*display arrows for navigation*@
+                                        <a class="carousel-control-prev" href="#favoriteBooksCarousel" role="button" data-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            @*  <span class="sr-only">Previous</span> *@
+                                        </a>
+                                        <a class="carousel-control-next" href="#favoriteBooksCarousel" role="button" data-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            @* <span class="sr-only">Next</span> *@
+                                        </a>
                                     </div>
-
-                                    @*display arrows for navigation*@
-                                    <a class="carousel-control-prev" href="#favoriteBooksCarousel" role="button" data-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        @*  <span class="sr-only">Previous</span> *@
-                                    </a>
-                                    <a class="carousel-control-next" href="#favoriteBooksCarousel" role="button" data-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        @* <span class="sr-only">Next</span> *@
-                                    </a>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
 
-                <br />
+                    <br />
 
-                @*if the user has badges then we display them*@
-                @if (Model.BadgesEarned != null)
-                {
-                    <h5>@Model.Name's Badges</h5>
+                    @*if the user has badges then we display them*@
+                    @if (Model.BadgesEarned != null)
+                    {
+                        <h5>@Model.Name's Badges</h5>
 
-                    <div class=" row">
-                        @foreach (var badge in Model.Badges)
-                        {
-                            @*3 per row*@
-                            <div class="col-md-4 mb-4">
-                                <div class="card">
-                                    <img src="@badge.Image" class="card-img-top" alt="@badge.Name image" />
+                        <div class=" row">
+                            @foreach (var badge in Model.Badges)
+                            {
+                                @*3 per row*@
+                                <div class="col-md-4 mb-4">
+                                    <div class="card">
+                                        <img src="@badge.Image" class="card-img-top" alt="@badge.Name image" />
 
-                                    <div class="card-body">
-                                        <h6 class="card-title">@badge.Name</h6>
+                                        <div class="card-body">
+                                            <h6 class="card-title">@badge.Name</h6>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        }
-                    </div>
+                            }
+                        </div>
+                    }
                 }
             </div>
         </div>
     </div>
 
-    <div class="card-footer">
-        <div class="row">
-            <div class="col">
-                <a href="@Url.Action("Edit", "Users", new { id = Model.Id })" class="btn btn-outline-secondary">Edit Profile</a>
+    @if(ViewBag.IsAdmin || ViewBag.IsEditor)
+    {
+        <div class="card-footer">
+            <div class="row">
+                <div class="col">
+                    <a href="@Url.Action("Edit", "Users", new { id = Model.Id })" class="btn btn-outline-secondary">Edit Profile</a>
+                </div>
+                <div class="col">
+                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                        <button type="submit" class="btn btn-outline-danger">Delete</button>
+                    </form>
+                </div>
             </div>
-            <div class="col">
-                <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
-                    <button type="submit" class="btn btn-outline-danger">Delete</button>
-                </form>
-            </div>
-        </div>
 
-    </div>
+        </div>
+    }
 </div>
 
 <script>

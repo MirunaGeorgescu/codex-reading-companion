@@ -21,6 +21,9 @@ namespace Codex.Models
         public virtual ICollection<ApplicationUser>? Followers { get; set; }
         public virtual ICollection<ApplicationUser>? Following { get; set; }
         public virtual ICollection<BuddyReadParticipant>? BuddyReadParticipations { get; set; }
+        public virtual ICollection<FriendsQuest>? FriendsQuestsAsUser1 { get; set; }
+        public virtual ICollection<FriendsQuest>? FriendsQuestsAsUser2 { get; set; }
+
 
         // streaks
         public int? Streak { get; set; }

@@ -13,6 +13,7 @@ using System;
 using System.Diagnostics.Metrics;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Ganss.Xss;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Codex.Controllers
 {
@@ -36,6 +37,8 @@ namespace Codex.Controllers
         // displaying all the books 
         public IActionResult Index(int? page)
         {
+            setAccessRights();
+
             //if theres no current page, we're on page 1
             int pageNumber = page ?? 1;
 
@@ -56,12 +59,19 @@ namespace Codex.Controllers
                     .ThenInclude(r => r.User)
                 .FirstOrDefault(b => b.BookId == id);
 
-            populateShelvesOptions(ref book);
+
+            var userId = userManager.GetUserId(User);
+            if(userId != null)
+            {
+                populateShelvesOptions(ref book);
+            }
 
             return View(book);
         }
 
+
         // displaying the form for adding a new book
+        [Authorize(Roles = "Admin")]
         public IActionResult New()
         {
 
@@ -72,6 +82,7 @@ namespace Codex.Controllers
         }
 
         // adding the info to the database
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult New(Book newBook)
         {
@@ -117,6 +128,7 @@ namespace Codex.Controllers
         }
 
         // displayng the form for editing a book
+        [Authorize(Roles = "Editor,Admin")]
         public IActionResult Edit(int id)
         {
             // finding the book in the database
@@ -129,6 +141,7 @@ namespace Codex.Controllers
 
         }
 
+        [Authorize(Roles = "Editor,Admin")]
         [HttpPost]
         public IActionResult Edit(int id, Book editedBook)
         {
@@ -167,7 +180,7 @@ namespace Codex.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Editor,Admin")]
         [HttpPost]
         public ActionResult Delete(int id)
         {
@@ -193,6 +206,7 @@ namespace Codex.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost]
         public ActionResult AddToShelf(int bookId, string selectedShelfValue)
         {

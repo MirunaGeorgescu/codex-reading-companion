@@ -1,5 +1,6 @@
 ﻿using Codex.Data;
 using Codex.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ namespace Codex.Controllers
             roleManager = _roleManager;
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult New()
         {
             // get all the books 
@@ -37,6 +39,7 @@ namespace Codex.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpPost]
         public IActionResult New(BuddyRead buddyRead)
         {
@@ -99,6 +102,7 @@ namespace Codex.Controllers
             }
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult Show(int id)
         {
             var buddyRead = GetBuddyReadById(id);
@@ -141,7 +145,7 @@ namespace Codex.Controllers
         }
 
 
-
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult Delete(int id)
         {
             var currentUserId = userManager.GetUserId(User);
@@ -226,7 +230,7 @@ namespace Codex.Controllers
         public class ParticipantProgress
         {
             public string Id { get; set; }
-            public string UserName { get; set; }
+            public string Name { get; set; }
             public int CurrentPage { get; set; }
         }
 
@@ -242,7 +246,7 @@ namespace Codex.Controllers
             var progress = new ParticipantProgress
             {
                 Id = user.Id, 
-                UserName = user.Name,
+                Name = user.Name,
                 CurrentPage = (int)usersCurrentPage
             };
 

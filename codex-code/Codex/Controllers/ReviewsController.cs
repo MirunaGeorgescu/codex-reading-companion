@@ -1,5 +1,6 @@
 ﻿using Codex.Data;
 using Codex.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,8 +31,9 @@ namespace Codex.Controllers
         }
 
         // displaying the form for a new comment 
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpGet]
-       public IActionResult New(int bookId)
+        public IActionResult New(int bookId)
         {
             // making sure the user has not already left a review for the book
             var userId = userManager.GetUserId(User); 
@@ -51,6 +53,7 @@ namespace Codex.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult New(int bookId, Review newReview)
         {
             if(ModelState.IsValid)
@@ -82,6 +85,7 @@ namespace Codex.Controllers
         }
 
         // displaying the edit form for a book
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpGet("Reviews/Edit/{reviewId:int}")]
         public IActionResult Edit(int reviewId)
         {
@@ -89,6 +93,7 @@ namespace Codex.Controllers
             return View(review);
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpPost]
         public IActionResult Edit(int reviewId, Review updatedReview)
         {
@@ -130,6 +135,7 @@ namespace Codex.Controllers
 
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpPost("Reviews/Delete/{reviewId:int}")]
         public ActionResult Delete(int reviewId)
         {
@@ -150,7 +156,6 @@ namespace Codex.Controllers
 
             return RedirectToAction("Show", "Books", new { id = review.BookId });
         }
-
 
         private Book getBookById(int bookId)
         {

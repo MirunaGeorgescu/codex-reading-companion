@@ -1,9 +1,11 @@
 ﻿using Codex.Data;
 using Codex.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NuGet.Protocol.Plugins;
 using System.Net;
 using System.Reflection.Metadata;
@@ -32,7 +34,7 @@ namespace Codex.Controllers
         }
 
         // for displaying all the users
-    
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult Index()
         {
            IEnumerable<ApplicationUser> allUsers = getAllUsers();
@@ -40,7 +42,7 @@ namespace Codex.Controllers
         }
 
         // for displaying just one of the users
-  
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult Show(string id)
         {
             var user = database.Users
@@ -61,10 +63,13 @@ namespace Codex.Controllers
             ViewBag.today = DateTime.Now;
             ViewBag.yesterday = DateTime.Now.AddDays(-1);
 
+            setAccessRights(); 
+
             return View(user);
         }
 
         // deleting a user 
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpPost]
         public IActionResult Delete(string id)
         {
@@ -111,6 +116,7 @@ namespace Codex.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult Profile(string id)
         {
             // find user, their shelves and their favorite books in the database 
@@ -121,10 +127,13 @@ namespace Codex.Controllers
                .Include(u => u.ReadingChallenges)
                .Include(u => u.Followers)
                .Include(u => u.Following)
+               .Include(u => u.FriendsQuestsAsUser1)
+               .Include(u => u.FriendsQuestsAsUser2)
                .FirstOrDefault(u => u.Id == id);
 
             populateBadges(ref user);
 
+            // READING CHALLANGE
             // calculate the progress in the reading challenge 
             var challengeProgress = readingChallengeProgress(user);
 
@@ -136,10 +145,54 @@ namespace Codex.Controllers
 
             ViewBag.today = DateTime.Now;
             ViewBag.yesterday = DateTime.Now.AddDays(-1);
+
+            // FRIENDS QUEST
+            // find if user is in a friends quest 
+            var currentFriendsQuest = database.FriendsQuests
+                                         .FirstOrDefault(fq => (fq.UserId1 == id || fq.UserId2 == id)
+                                                                    && fq.EndDate > DateTime.Now);
+            if(currentFriendsQuest !=  null)
+            {
+                ViewBag.IsInFriendsQuest = true;
+                ViewBag.TargetPages = currentFriendsQuest.TargetPages; 
+
+                var progress = (double)currentFriendsQuest.PagesRead / currentFriendsQuest.TargetPages * 100;
+                ViewBag.FriendsQuestProgress = Math.Min(progress, 100);
+
+                // find the other user
+                var user1 = currentFriendsQuest.User1;
+                var user2 = currentFriendsQuest.User2;
+
+                // if the current user is user1 then the other friend in the quest is user 2
+                if(user1.Id == id)
+                {
+                    ViewBag.FriendInQuest = user2.Name;
+                }
+                else
+                {
+                    ViewBag.FriendInQuest = user1.Name;
+                }
+                
+
+
+            }
+            else
+                ViewBag.IsInFriendsQuest = false;
+
+            setAccessRights();
+
+            if (id == userManager.GetUserId(User) || User.IsInRole("Admin") || User.IsInRole("Editor"))
+                ViewBag.IsAllowed = true; 
+            else
+                ViewBag.IsAllowed = false;
+
+            
+
             return View(user);
         }
 
         // display the form for changing your profile 
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult Edit(string id)
         {
             var user = getUserById(id);
@@ -151,6 +204,7 @@ namespace Codex.Controllers
         }
 
         // update the users profile and redirect to the profile
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpPost]
         public IActionResult Edit(string id, ApplicationUser updatedUserProfile)
         {
@@ -188,6 +242,7 @@ namespace Codex.Controllers
             }
         }
 
+        [Authorize(Roles = "User")]
         public IActionResult Follow(string followedUserId)
         {
             var followerUserId = getCurrentUserId();
@@ -214,6 +269,7 @@ namespace Codex.Controllers
             return RedirectToAction("Show", "Users", new { id = followedUserId });
         }
 
+        [Authorize(Roles = "User")]
         public IActionResult Unfollow(string unfollowedUserId)
         {
             var followerUserId = getCurrentUserId();
@@ -241,6 +297,7 @@ namespace Codex.Controllers
             return RedirectToAction("Show", "Users", new { id = unfollowedUserId });
         }
 
+        [Authorize(Roles = "User")]
         public IActionResult UpdateProgress(string userId, int bookId)
         {
             ApplicationUser user = getUserById(userId);
@@ -261,6 +318,8 @@ namespace Codex.Controllers
             return View(bookOnShelf);
         }
 
+
+        [Authorize(Roles = "User")]
         [HttpPost]
         public IActionResult UpdateProgress(string userId, int bookId, BookOnShelf update)
         {
@@ -345,11 +404,19 @@ namespace Codex.Controllers
                 {
                     user.LastStreakDay = today;
                     user.Streak = 1;
-                }  
+                }
             }
-            
 
+            // add the progress to the friends quest too, if the user is part of one 
+            var currentFriendsQuest = database.FriendsQuests
+                                        .FirstOrDefault(fq => (fq.UserId1 == userId || fq.UserId2 == userId)
+                                                                   && fq.EndDate > DateTime.Now);
 
+            if(currentFriendsQuest != null)
+            {
+                currentFriendsQuest.PagesRead += (int)pagesRead; 
+                database.SaveChanges();
+            }
 
             return RedirectToAction("Show", "Shelves", new { shelfId = oldBookOnShelf.ShelfId });
         }
@@ -575,6 +642,7 @@ namespace Codex.Controllers
 
             return false; 
         }
-       
+
+
     }
 }

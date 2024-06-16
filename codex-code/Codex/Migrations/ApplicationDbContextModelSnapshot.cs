@@ -285,6 +285,41 @@ namespace Codex.Migrations
                     b.ToTable("BuddyReadsParticipants");
                 });
 
+            modelBuilder.Entity("Codex.Models.FriendsQuest", b =>
+                {
+                    b.Property<int>("QuestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuestId"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PagesRead")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TargetPages")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId2")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("QuestId");
+
+                    b.HasIndex("UserId1");
+
+                    b.HasIndex("UserId2");
+
+                    b.ToTable("FriendsQuests");
+                });
+
             modelBuilder.Entity("Codex.Models.Genre", b =>
                 {
                     b.Property<int>("GenreId")
@@ -674,6 +709,23 @@ namespace Codex.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Codex.Models.FriendsQuest", b =>
+                {
+                    b.HasOne("Codex.Models.ApplicationUser", "User1")
+                        .WithMany("FriendsQuestsAsUser1")
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Codex.Models.ApplicationUser", "User2")
+                        .WithMany("FriendsQuestsAsUser2")
+                        .HasForeignKey("UserId2")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("User1");
+
+                    b.Navigation("User2");
+                });
+
             modelBuilder.Entity("Codex.Models.ReadingBadge", b =>
                 {
                     b.HasOne("Codex.Models.ApplicationUser", null)
@@ -774,6 +826,10 @@ namespace Codex.Migrations
                     b.Navigation("BuddyReadParticipations");
 
                     b.Navigation("FavoriteBooks");
+
+                    b.Navigation("FriendsQuestsAsUser1");
+
+                    b.Navigation("FriendsQuestsAsUser2");
 
                     b.Navigation("ReadingChallenges");
 
