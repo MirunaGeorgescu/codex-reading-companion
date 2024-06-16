@@ -53,19 +53,19 @@
 
             <div class="card-footer">
 
-                
-                    @if (ViewBag.IsEditor || ViewBag.IsAdmin)
-                    {
-                        <div class="row">
-                            <div class="col">
-                                <a href="/Books/Edit/@Model.BookId" class="btn btn-outline-secondary">Edit</a>
-                                <form method="post" action="/Books/Delete/@Model.BookId" style="display: inline;">
-                                    <button class="btn btn-outline-danger" type="submit">Delete</button>
-                                </form>
-                            </div>
+
+                @if (ViewBag.IsEditor || ViewBag.IsAdmin)
+                {
+                    <div class="row">
+                        <div class="col">
+                            <a href="/Books/Edit/@Model.BookId" class="btn btn-outline-secondary">Edit</a>
+                            <form method="post" action="/Books/Delete/@Model.BookId" style="display: inline;">
+                                <button class="btn btn-outline-danger" type="submit">Delete</button>
+                            </form>
                         </div>
-                    }
-                
+                    </div>
+                }
+
 
                 @if (ViewBag.IsUser)
                 {
@@ -78,7 +78,7 @@
                                 @foreach (var shelf in Model.ShelvesOptions)
                                 {
                                     // if the book has been placed on a shelf before show it as selected
-                                    @if(shelf.Selected)
+                                    @if (shelf.Selected)
                                     {
                                         <option value="@shelf.Value" selected>@shelf.Text</option>
                                     }
@@ -98,20 +98,35 @@
 
             @*Displaying reviews*@
             <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col"><h3>Reviews</h3></div>
-                        <div class="col text-right">
-                            <a href="/Reviews/New?bookId=@Model.BookId" class="btn btn-outline-secondary"><i class="bi bi-plus-circle"></i> Add Review</a>
+                @if (ViewBag.IsUser)
+                {
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col"><h3>Reviews</h3></div>
+                            <div class="col text-right">
+                                <a href="/Reviews/New?bookId=@Model.BookId" class="btn btn-outline-secondary"><i class="bi bi-plus-circle"></i> Add Review</a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
+                else
+                   if(!ViewBag.IsAdmin && !ViewBag.IsEditor)
+                {
+                    <div class="card-header">
+                        <p>Please <a style="display: inline-block;" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">login</a> to add a review.</p>
+                    </div>
+                }
+
+               
+
                 <div class="card-body">
                     @if (Model.Reviews != null)
                     {
                         // if there are reviews
                         @foreach (var review in Model.Reviews)
                         {
+                            bool canEditOrDelete = (ViewBag.IsAdmin || ViewBag.IsEditor || (ViewBag.IsUser && review.UserId == User.Identity.Name));
+
                             // displaying those reviews in a card
                             <div class="card mb-3">
                                 @*when clicked, the link redirects to the users profile*@
@@ -130,12 +145,16 @@
 
 
                                     @*buttons for editing and deleting a review*@
-                                    <div class="float-right">
-                                        <a href="/Reviews/Edit/@review.ReviewId" class="btn btn-outline-secondary btn-sm">Edit</a>
-                                        <form method="post" action="/Reviews/Delete/@review.ReviewId" style="display: inline;">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
-                                        </form>
-                                    </div>
+                                    @if (canEditOrDelete)
+                                    {
+                                        // Display edit and delete buttons
+                                        <div class="float-right">
+                                            <a href="/Reviews/Edit/@review.ReviewId" class="btn btn-outline-secondary btn-sm">Edit</a>
+                                            <form method="post" action="/Reviews/Delete/@review.ReviewId" style="display: inline;">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                            </form>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         }
