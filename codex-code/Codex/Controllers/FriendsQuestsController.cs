@@ -13,6 +13,7 @@ using System;
 using System.Diagnostics.Metrics;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Ganss.Xss;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Codex.Controllers
@@ -32,6 +33,7 @@ namespace Codex.Controllers
             roleManager = _roleManager;
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult New()
         {
             var currentUserId = userManager.GetUserId(User); 
@@ -66,6 +68,7 @@ namespace Codex.Controllers
 
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpPost]
         public IActionResult New(FriendsQuest friendsQuest)
         {
