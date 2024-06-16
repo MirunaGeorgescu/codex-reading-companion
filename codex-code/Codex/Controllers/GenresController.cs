@@ -2,12 +2,14 @@
 using Codex.Migrations;
 using Codex.Models;
 using Humanizer.Localisation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Codex.Controllers
 {
+    [Authorize(Roles = "Editor,Admin")]
     public class GenresController : Controller
     {
         private readonly ApplicationDbContext database;
@@ -34,6 +36,7 @@ namespace Codex.Controllers
         }
 
         // displaying the form for adding a new genre to the database
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult New()
         {
@@ -41,6 +44,7 @@ namespace Codex.Controllers
         }
 
         // adding the new genre to the databse
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult New(Genre newGenre)
         {
@@ -77,6 +81,7 @@ namespace Codex.Controllers
         }
 
         // displaying the form for editing a genre
+        [Authorize(Roles = "Editor,Admin")]
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -84,6 +89,7 @@ namespace Codex.Controllers
             return View(genre);
         }
 
+        [Authorize(Roles = "Editor,Admin")]
         [HttpPost]
         public IActionResult Edit(int id, Genre newGenre)
         {
@@ -126,6 +132,7 @@ namespace Codex.Controllers
             }
         }
 
+        [Authorize(Roles = "Editor,Admin")]
         [HttpPost]
         public IActionResult Delete(int id) {
             // finding the genre in the database
