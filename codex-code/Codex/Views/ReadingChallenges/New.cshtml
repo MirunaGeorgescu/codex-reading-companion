@@ -14,7 +14,7 @@
     <input type="hidden" asp-for ="EndDate" />
 
     <div class="form-group">
-        <label asp-for="TargetNumber">How many books do you want to read this year></label>
+        <label asp-for="TargetNumber">How many books do you want to read this year?</label>
         <input asp-for="TargetNumber" type="text" class="form-control" placeholder="Enter the number of books you want to read this year" />
         @Html.ValidationMessageFor(m => m.TargetNumber, "The target number of books is required!", new { @class = "text-danger" })
     </div>

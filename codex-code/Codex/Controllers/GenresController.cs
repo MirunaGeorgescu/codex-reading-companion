@@ -2,6 +2,7 @@
 using Codex.Migrations;
 using Codex.Models;
 using Humanizer.Localisation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -10,10 +11,16 @@ namespace Codex.Controllers
     public class GenresController : Controller
     {
         private readonly ApplicationDbContext database;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
 
-        public GenresController(ApplicationDbContext context)
+        public GenresController(ApplicationDbContext context,
+            UserManager<ApplicationUser> _userManager,
+            RoleManager<IdentityRole> _roleManager)
         {
             database = context;
+            userManager = _userManager;
+            roleManager = _roleManager;
         }
 
         [HttpGet]

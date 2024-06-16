@@ -40,7 +40,7 @@
                 @*Follow/ unfollow button*@
                 @if (ViewBag.IsFollowing)
                 {
-                    <a class="btn btn-outline-secondary" href="@Url.Action("Unfollow", "Users", new { unfollowedUserId = Model.Id })">Following</a>
+                    <a class="btn btn-outline-secondary" href="@Url.Action("Unfollow", "Users", new { unfollowedUserId = Model.Id })">Unfollow</a>
                 }
                 else
                 {

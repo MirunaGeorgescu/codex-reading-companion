@@ -149,6 +149,7 @@ namespace Codex.Controllers
             if(currentFriendsQuest !=  null)
             {
                 ViewBag.IsInFriendsQuest = true;
+                ViewBag.TargetPages = currentFriendsQuest.TargetPages; 
 
                 var progress = (double)currentFriendsQuest.PagesRead / currentFriendsQuest.TargetPages * 100;
                 ViewBag.FriendsQuestProgress = Math.Min(progress, 100);
