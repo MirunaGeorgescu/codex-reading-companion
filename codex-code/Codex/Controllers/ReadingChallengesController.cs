@@ -1,6 +1,7 @@
 ﻿using Codex.Data;
 using Codex.Migrations;
 using Codex.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -31,6 +32,7 @@ namespace Codex.Controllers
             roleManager = _roleManager;
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult Show(int id)
         {
             var challenge = getReadingChallengeById(id);
@@ -44,6 +46,7 @@ namespace Codex.Controllers
         }
 
         // display the form for adding a new reading challange
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult New(string userId)
         {
 
@@ -71,6 +74,7 @@ namespace Codex.Controllers
 
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpPost]
         public IActionResult New(string userId, ReadingChallenge newReadingChallenge)
         {
@@ -104,12 +108,14 @@ namespace Codex.Controllers
             }
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult Edit(int id)
         {
             var readingChallenge = getReadingChallengeById(id);
             return View(readingChallenge);
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpPost]
         public IActionResult Edit(int id, ReadingChallenge updatedReadingChallenge)
         {
@@ -138,6 +144,7 @@ namespace Codex.Controllers
             }
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         [HttpPost]
         public IActionResult Delete(int id)
         {
@@ -154,6 +161,7 @@ namespace Codex.Controllers
             return RedirectToAction("Profile", "Users", new { id = userId });
         }
 
+        [Authorize(Roles = "Editor,Admin,User")]
         public IActionResult YearlyRecap(string userId)
         {
             var user = getUserById(userId);
@@ -242,8 +250,6 @@ namespace Codex.Controllers
             // if the user hasn't joined the reading challenge then return null
             return null;
         }
-
-        
 
         private double GetAverageRating(ReadingChallenge readingChallenge)
         {
